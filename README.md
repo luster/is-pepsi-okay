@@ -3,14 +3,14 @@ is-pepsi-okay
 
 Movie Recommendation Semester Project for ECE464 Databases, Fall 2014 at Cooper Union
 
-## stack
+## Stack
 
 - MySQL
 - Python/Flask
 - gunicorn
 - nginx
 
-## get started
+## Get Started (Dev environment)
 
 1. Install [Vagrant](https://www.vagrantup.com/downloads).
 2. clone the repo
@@ -23,7 +23,7 @@ You can modify the code on your local machine. The folder is synced with vagrant
 
 - make sure MySQL is configured for the app to use
 
-## authors
+## Authors
 
 - Ethan Lusterman
 - Joe Mercedes
