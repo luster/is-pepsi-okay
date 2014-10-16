@@ -21,7 +21,11 @@ You can modify the code on your local machine. The folder is synced with vagrant
 
 ## TODO
 
-- make sure MySQL is configured for the app to use
+- find dataset(s)
+- populate tables (python scripts)
+- consider using one database instead of local
+- write some sample queries
+
 
 ## Authors
 

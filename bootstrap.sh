@@ -38,3 +38,6 @@ sudo /etc/init.d/nginx restart
 
 cd $PROJECT_DIR
 sudo gunicorn -D --max-requests 1 app:app -b localhost:8000
+
+# mysql initialize
+mysql -uroot -pispepsiokay < $PROJECT_DIR/database/schema.sql
