@@ -19,6 +19,10 @@ Movie Recommendation Semester Project for ECE464 Databases, Fall 2014 at Cooper 
 
 You can modify the code on your local machine. The folder is synced with vagrant, and you can immediately see your changes reflected in the browser.
 
+## TODO
+
+- make sure MySQL is configured for the app to use
+
 ## authors
 
 - Ethan Lusterman
