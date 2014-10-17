@@ -13,7 +13,7 @@ mysql.init_app(app)
 @app.route('/')
 def index():
     cursor = mysql.get_db().cursor()
-    query = """SELECT uid,email,uname FROM Users"""
+    query = """SELECT uid,email,pass,uname,udob FROM Users"""
     cursor.execute(query)
     users = cursor.fetchall()
     cursor.close()
@@ -21,7 +21,7 @@ def index():
     html = "<html><head></head><body>"
     html += "<table>"
     for u in users:
-    	html += "<tr><td>%d</td><td>%s</td><td>%s</td></tr>" % (u[0],u[1],u[2])
+    	html += "<tr><td>%d</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>" % (u[0],u[1],u[2],u[3],u[4])
     html += "</table></body></html>"
     return html
 
