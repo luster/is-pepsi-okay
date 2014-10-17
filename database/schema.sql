@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS IsPepsiOkay;
 USE IsPepsiOkay;
 
 CREATE TABLE IF NOT EXISTS Users (
-    uid INTEGER,
+    uid INTEGER AUTO_INCREMENT,
     email CHAR(254),
     pass CHAR(32),
     uname CHAR(64),
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS Users (
 
 
 CREATE TABLE IF NOT EXISTS Genres (
-    gid INTEGER,
+    gid INTEGER AUTO_INCREMENT,
     gname CHAR(64),
     PRIMARY KEY (gid),
     UNIQUE (gname)
@@ -22,14 +22,14 @@ CREATE TABLE IF NOT EXISTS Genres (
 
 
 CREATE TABLE IF NOT EXISTS People (
-    pid INTEGER,
+    pid INTEGER AUTO_INCREMENT,
     pname CHAR(64),
     pdob DATE,
     PRIMARY KEY (pid)
 );
 
 CREATE TABLE IF NOT EXISTS Movies (
-    mid INTEGER,
+    mid INTEGER AUTO_INCREMENT,
     title CHAR(255),
     mdate DATE,
     runtime INTEGER,
