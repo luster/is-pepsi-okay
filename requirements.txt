@@ -18,3 +18,4 @@ sqlalchemy-migrate==0.9.2
 sqlparse==0.1.13
 wsgiref==0.1.2
 gunicorn
+wikipedia

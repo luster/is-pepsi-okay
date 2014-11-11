@@ -1,0 +1,50 @@
+Movie (update table to include director code possibly…)
+	missing
+		runtime
+		language(s)
+		keywords
+		description
+		tagline
+		budget
+		box office
+		mpaa rating
+		country
+Genre
+Person - Director
+Person - Producer
+
+///////////////////////////////////////////////////////////
+
+code to generate actor_file structure
+for actor in actor_file do
+	INSERT actor, dob into Persons
+
+code to generate main_movie_file structure
+for movie in main_movie_file do
+	INSERT movie.ALL_RELEVANT into Movies // unique, so this is fine
+	
+	if movie.genre not in table Genres:
+		INSERT movie.genre (col 8) into table
+		
+	INSERT movie, genre into Is_Genre table
+	
+	if movie.director not in table Persons:
+		get_person_dob(director)
+		INSERT Person into Persons (update DOB later)
+
+	if movie.producer not in table Persons:
+		get_person_dob(producer)
+		INSERT Person into Persons (update DOB later)
+
+	if director == producer
+		INSERT Person, Movie, (1,1,0,0,0) into Involved_In
+	else:
+		INSERT director, Movie, (1,0,0,0,0) into Involved_In
+		INSERT producer, Movie, (0,1,0,0,0) into Involved_In
+
+code to generate cast_file
+for line in cast_file
+	if line.actor, line.movie in table Involved_In:
+		UPDATE to include actor
+	else:
+		INSERT into Involved_In

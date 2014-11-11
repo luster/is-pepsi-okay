@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS Movies (
     tagline VARCHAR(512),
     budget REAL,
     box_office REAL,
-    mrating REAL,
+    mrating CHAR(8),
     country CHAR(64),
     PRIMARY KEY (mid),
     UNIQUE (title, mdate)
