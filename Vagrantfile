@@ -8,7 +8,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
   # ubuntu dist
-  config.vm.box = "precise32"
+  config.vm.box = "virtualbox"
+  config.vm.box_url = "https://vagrantcloud.com/ubuntu/trusty64/version/1/provider/virtualbox.box"
 
   # share folder
   config.vm.synced_folder ".", "/home/vagrant/is-pepsi-okay/"
