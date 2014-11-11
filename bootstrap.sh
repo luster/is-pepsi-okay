@@ -3,7 +3,8 @@
 debconf-set-selections <<< 'mysql-server mysql-server/root_password password ispepsiokay'
 debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password ispepsiokay'
 
-PROJECT_DIR=/home/vagrant/is-pepsi-okay
+PROJECT_DIR=/home/vagrant/is-pepsi-okay/IsPepsiOkay
+PROJECT_NAME=IsPepsiOkay
 
 # install
 sudo apt-get update
@@ -23,7 +24,7 @@ sudo pip install -r $PROJECT_DIR/requirements.txt
 
 # start web server
 cd $PROJECT_DIR
-sudo gunicorn -D --max-requests 1 app:app -b 127.0.0.1:8000
+sudo gunicorn -D --max-requests 1 $PROJECT_NAME:app -b 127.0.0.1:8000
 
 sudo /etc/init.d/nginx start
 
@@ -37,7 +38,7 @@ sudo printf 'server {\n\tlocation / {\n\t\tproxy_pass http://127.0.0.1:8000;\n\t
 sudo /etc/init.d/nginx restart
 
 cd $PROJECT_DIR
-sudo gunicorn -D --max-requests 1 app:app -b localhost:8000
+sudo gunicorn -D --max-requests 1 $PROJECT_NAME:app -b localhost:8000
 
 # mysql initialize
 mysql -uroot -pispepsiokay < $PROJECT_DIR/database/schema.sql

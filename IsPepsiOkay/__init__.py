@@ -10,3 +10,6 @@ login_manager.setup_app(app)
 database = Database(app)
 
 import IsPepsiOkay.views
+
+if __name__ == '__main__':
+    app.run()
