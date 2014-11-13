@@ -8,11 +8,12 @@ PROJECT_NAME=IsPepsiOkay
 
 # install
 sudo apt-get update
-sudo apt-get install -y python-pip
+sudo apt-get upgrade
 sudo apt-get install -y git
 sudo apt-get install -y vim
 sudo apt-get install -y libmysqlclient-dev
 sudo apt-get install -y python-dev
+sudo apt-get install -y python-virtualenv
 sudo apt-get install -y mysql-server
 sudo apt-get install -y mysql-client
 sudo apt-get install -y nginx
@@ -20,6 +21,10 @@ sudo apt-get install -y supervisor
 sudo apt-get update
 
 # python requirements
+cd $PROJECT_DIR
+sudo apt-get remove python-pip
+wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+sudo python get-pip.py
 sudo pip install -r $PROJECT_DIR/requirements.txt
 
 # start web server
