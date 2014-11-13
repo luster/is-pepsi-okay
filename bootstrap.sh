@@ -47,3 +47,5 @@ sudo gunicorn -D --max-requests 1 $PROJECT_NAME:app -b localhost:8000
 
 # mysql initialize
 mysql -uroot -pispepsiokay < $PROJECT_DIR/$PROJECT_NAME/database/schema.sql
+
+sudo apt-get install -y python-mysqldb
