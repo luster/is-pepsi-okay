@@ -23,16 +23,40 @@ db = MySQLdb.connect(
 
 cur = db.cursor()
 
+ACTOR_QUERY = """INSERT INTO People (pname,pdob) VALUES """
 # Code to generate Actor File Structure
 with open(DATA_DIR + '/uci/actors.html.better', 'r') as f:
     num = 0
+    count = 0
     soup = BeautifulSoup(f.read())
     tbl = soup.findAll('table')
     for table in tbl:
         for row in table.findAll('tr')[1:]:
-            if len(row.findAll('td')) > 0:
-                num += 1
-                print row.findAll('td')[0].contents[0][1:]
+            cells = row.findAll('td')
+            if len(cells) > 0:
+                name = cells[0].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')#.encode('ascii','replace')
+                ACTOR_QUERY += "('%s'" % (name)
+                dob = '0000-00-00'
+                if len(cells) > 5:
+                    dob = row.findAll('td')[5].contents[0][:]
+                    try:
+                        dob = int(dob)
+                        dob = "%d-01-01" % (dob)
+                    except:
+                        dob = '0000-00-00'
+                ACTOR_QUERY += ",'%s')," % (dob)
+                count += 1
+            if not count % 50:
+                print count
+    ACTOR_QUERY = ACTOR_QUERY[:-1] + ";"
+
+print 'Executing Query...'
+cur.execute(ACTOR_QUERY)
+
+print cur.rowcount
+cur.close()
+db.commit()
+db.close()
 
 print 'Works'
 print num
