@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS People (
 );
 
 CREATE TABLE IF NOT EXISTS Movies (
-    mid INTEGER AUTO_INCREMENT,
+    mid CHAR(32),
     title CHAR(255),
     mdate DATE,
     runtime INTEGER,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS Likes_Person (
 );
 
 CREATE TABLE IF NOT EXISTS Is_Genre (
-    mid INTEGER,
+    mid CHAR(32),
     gid INTEGER,
     FOREIGN KEY (mid) REFERENCES Movies(mid),
     FOREIGN KEY (gid) REFERENCES Genres(gid),
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS Is_Genre (
 
 CREATE TABLE IF NOT EXISTS Has_Watched (
     uid INTEGER,
-    mid INTEGER,
+    mid CHAR(32),
     urating REAL,
     FOREIGN KEY (uid) REFERENCES Users(uid),
     FOREIGN KEY (mid) REFERENCES Movies(mid),
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS Has_Watched (
 
 CREATE TABLE IF NOT EXISTS Involved_In (
     pid INTEGER,
-    mid INTEGER,
+    mid CHAR(32),
     directed BOOLEAN,
     produced BOOLEAN,
     wrote BOOLEAN,
