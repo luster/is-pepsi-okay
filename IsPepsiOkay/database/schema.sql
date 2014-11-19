@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS Movies (
     runtime INTEGER,
     languages CHAR(64),
     keywords CHAR(128),
-    description VARCHAR(1024),
+    description VARCHAR(4096),
     tagline VARCHAR(512),
     budget REAL,
     box_office REAL,

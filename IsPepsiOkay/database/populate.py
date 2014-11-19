@@ -102,7 +102,11 @@ cur.execute(PEOPLE_QUERY)
 people = cur.fetchall()
 
 ####################
-
+def wiki_parse(sidebar, header_text):
+    try:
+        return sidebar.find('th', text=header_text).parent.find('td').text.strip()
+    except AttributeError:
+        return ''
 
 MOVIE_QUERY = """INSERT INTO Movies (%s) VALUES """
 with open(DATA_DIR + '/uci/main.html', 'r') as f:
@@ -117,6 +121,22 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
                 title = cells[1].contents[0][:].split("T:")[1]
                 rdate = int(cells[2].contents[0][:])
                 rdate = '%d-01-01' % (rdate)
+                page_name = "%s %d film" % (title, rdate)
+                wiki = wikipedia.page(page_name)
+                if wiki:
+                    if wiki.title.lower() in page_name.lower():
+                        # look for runtime, languages, *keywords, description
+                        # *tagline, budget, box_office, mpaa rating, country
+                        wiki_soup = BeautifulSoup(wiki.html())
+                        sidebar = wiki_soup.find('table', {"class": 'infobox vevent'})
+                        description = wiki.summary
+                        runtime = wiki_parse(sidebar, 'Running time')
+                        languages = wiki_parse(sidebar, 'Language').replace('<br>',',')
+                        country = wiki_parse(sidebar, 'Country')
+                        budget = wiki_parse(sidebar, 'Budget')
+                        box_office = wiki_prase(sidebar, 'Box office')
+
+
 
 
 
