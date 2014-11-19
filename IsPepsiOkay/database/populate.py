@@ -104,15 +104,21 @@ ra = cur.fetchall()
 ####################
 def wiki_parse(sidebar, header_text, multiple=0):
     try:
+        strs = []
         elem = sidebar.find('th', text=header_text).parent.find('td')
         if not multiple:
             for s in elem.stripped_strings:
                 # only return first one
                 return s
-        else:
-            return elem.text.strip()
+        for s in elem.stripped_strings:
+            strs.append(s)
+        return strs
+        #else:
+        #    return elem.text.strip()
     except:
-        return ''
+        if not multiple:
+            return ''
+        return []
 
 def grab_col(tr, col_num):
     text = tr.xpath('./td[%d]//text()' % (col_num))
@@ -129,6 +135,8 @@ def repr_int(s):
         return False
     except TypeError:
         return False
+    except:
+        return False
 
 def closest_wiki_page(title, year):
     search = wikipedia.search(title)
@@ -136,6 +144,15 @@ def closest_wiki_page(title, year):
         if title in search[0] or 'film' in search[0]:
             return wikipedia.page(title)
 
+def convert_to_int(s):
+    cl = s.replace('$','').replace(',','')
+    try:
+        i = int(cl)
+    except ValueError:
+        pars = cl.split()
+        i = int(float(pars[0]) * 1000000.)
+
+    return i
 
 from lxml import etree
 MOVIE_QUERY = """INSERT INTO Movies (%s) VALUES """
@@ -154,9 +171,22 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
         if not repr_int(rdate): continue
         releasedate = '%s-01-01' % (int(rdate))
 
+        genre = grab_col(tr, 8)
+        if not genre: continue
+
+        if title != "Poison": continue
+
         page_name = "%s" % (title)
+        print rdate
         try:
             wiki = wikipedia.page(page_name)
+            summary = wiki.summary
+            if 'film' not in summary or 'movie' not in summary:
+                print 'here'
+                wiki = wikipedia.page(page_name + ' (%s film)' %(rdate))
+                summary = wiki.summary
+                if rdate not in summary:
+                    continue
         except wikipedia.exceptions.DisambiguationError as e:
             try:
                 wiki = wikipedia.page(page_name + ' (%s film)' %(rdate))
@@ -172,23 +202,30 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
             wiki_soup = BeautifulSoup(wiki.html())
 
             sidebar = wiki_soup.find('table', {"class": 'infobox vevent'})
+
             description = wiki.summary
-            print description
             runtime = wiki_parse(sidebar, 'Running time')
-            print runtime
-            languages = wiki_parse(sidebar, 'Language').replace('<br>',',')
-            print languages
-            country = wiki_parse(sidebar, 'Country').replace('<br>',',')
-            print country
+            languages = wiki_parse(sidebar, 'Language', True)
+            country = wiki_parse(sidebar, 'Country', True)
+
             budget = wiki_parse(sidebar, 'Budget')
-            print budget
+            budget = convert_to_int(budget)
+
             box_office = wiki_parse(sidebar, 'Box office')
-            print box_office
+            box_office = convert_to_int(box_office)
 
-            #people = {}
+            # involvement: direct, produce, write, music, act=0
+            directed = wiki_parse(sidebar, 'Directed by', True)
+            produced = wiki_parse(sidebar, 'Produced by', True)
+            wrote = wiki_parse(sidebar, 'Written by', True)
+            music = wiki_parse(sidebar, 'Music by', True)
+            starred = wiki_parse(sidear, 'Starring', True)
 
-            #director = wiki_parse(sidebar, 'Directed by')
-            #print director
+            # set
+            people = set().union(*[directed,produced,wrote,music,starred])
+
+            break
+        break
 
 cur.close()
 db.commit()
