@@ -154,8 +154,22 @@ def convert_to_int(s):
 
     return i
 
+def convert_runtime(r):
+    if not r:
+        return 0
+    if 'minutes' in r:
+        r = r.split()[0]
+        return int(r)
+    if 'hours' in r:
+        r = r.split()[0]
+        return int(float(r) * 60.)
+    print r + '\tdafuq'
+    return 0
+
+
 from lxml import etree
-MOVIE_QUERY = """INSERT INTO Movies (%s) VALUES """
+movie_attrs = "mid,title,mdate,runtime,languages,description,budget,box_office,country"
+MOVIE_QUERY = """INSERT INTO Movies (%s) VALUES """ % (movie_attrs)
 with open(DATA_DIR + '/uci/main.html', 'r') as f:
     count = 0
     doc = etree.HTML(f.read())
@@ -174,14 +188,13 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
         genre = grab_col(tr, 8)
         if not genre: continue
 
-        if title != "Poison": continue
+        if title != "Grease 2": continue
 
         page_name = "%s" % (title)
-        print rdate
         try:
             wiki = wikipedia.page(page_name)
             summary = wiki.summary
-            if 'film' not in summary or 'movie' not in summary:
+            if 'film' not in summary and 'movie' not in summary and 'directed' not in summary:
                 print 'here'
                 wiki = wikipedia.page(page_name + ' (%s film)' %(rdate))
                 summary = wiki.summary
@@ -192,6 +205,8 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
                 wiki = wikipedia.page(page_name + ' (%s film)' %(rdate))
             except:
                 continue
+        except wikipedia.exceptions.PageError as e:
+            continue
 
         if wiki and title.lower() in wiki.title.lower():
             count += 1
@@ -203,16 +218,24 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
 
             sidebar = wiki_soup.find('table', {"class": 'infobox vevent'})
 
-            description = wiki.summary
+            description = wiki.summary.replace("'","''")
+
             runtime = wiki_parse(sidebar, 'Running time')
-            languages = wiki_parse(sidebar, 'Language', True)
-            country = wiki_parse(sidebar, 'Country', True)
+            runtime = convert_runtime(runtime)
+
+            languages = ','.join(wiki_parse(sidebar, 'Language', True)).replace("'","''")
+            country = ','.join(wiki_parse(sidebar, 'Country', True)).replace("'","''")
 
             budget = wiki_parse(sidebar, 'Budget')
             budget = convert_to_int(budget)
 
             box_office = wiki_parse(sidebar, 'Box office')
             box_office = convert_to_int(box_office)
+
+            QUERY = MOVIE_QUERY + "('%s','%s','%s',%s,'%s','%s',%s,%s,'%s')" % (mid,
+                    title,releasedate,runtime,languages,description,budget,box_office,country)
+            print QUERY
+            break
 
             # involvement: direct, produce, write, music, act=0
             directed = wiki_parse(sidebar, 'Directed by', True)
@@ -223,6 +246,10 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
 
             # set
             people = set().union(*[directed,produced,wrote,music,starred])
+            while people:
+                person = people.pop()
+                #cur.execute('SELECT
+
 
             break
         break
