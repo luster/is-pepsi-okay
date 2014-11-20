@@ -3,6 +3,9 @@ CREATE DATABASE IsPepsiOkay;
 
 USE IsPepsiOkay;
 
+SET collation_connection = ‘utf8_general_ci’;
+ALTER DATABASE IsPepsiOkay CHARACTER SET utf8 COLLATE utf8_general_ci;
+
 CREATE TABLE IF NOT EXISTS Users (
     uid INTEGER AUTO_INCREMENT,
     email CHAR(254),
@@ -12,7 +15,7 @@ CREATE TABLE IF NOT EXISTS Users (
     PRIMARY KEY (uid),
     UNIQUE (email)
 );
-
+ALTER TABLE Users CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Genres (
     gid INTEGER AUTO_INCREMENT,
@@ -20,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Genres (
     PRIMARY KEY (gid),
     UNIQUE (gname)
 );
-
+ALTER TABLE Genres CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS People (
     pid INTEGER AUTO_INCREMENT,
@@ -28,6 +31,7 @@ CREATE TABLE IF NOT EXISTS People (
     pdob DATE,
     PRIMARY KEY (pid)
 );
+ALTER TABLE People CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Movies (
     mid CHAR(32),
@@ -42,6 +46,7 @@ CREATE TABLE IF NOT EXISTS Movies (
     PRIMARY KEY (mid),
     UNIQUE (title, mdate)
 );
+ALTER TABLE Movies CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Likes_Genre (
     uid INTEGER,
@@ -51,6 +56,7 @@ CREATE TABLE IF NOT EXISTS Likes_Genre (
     FOREIGN KEY (gid) REFERENCES Genres(gid),
     PRIMARY KEY (uid, gid)
 );
+ALTER TABLE Likes_Genre CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Likes_Person (
     uid INTEGER,
@@ -60,6 +66,7 @@ CREATE TABLE IF NOT EXISTS Likes_Person (
     FOREIGN KEY (pid) REFERENCES People(pid),
     PRIMARY KEY (uid, pid)
 );
+ALTER TABLE Likes_Person CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Is_Genre (
     mid CHAR(32),
@@ -68,6 +75,7 @@ CREATE TABLE IF NOT EXISTS Is_Genre (
     FOREIGN KEY (gid) REFERENCES Genres(gid),
     PRIMARY KEY (mid, gid)
 );
+ALTER TABLE Is_Genre CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Has_Watched (
     uid INTEGER,
@@ -77,6 +85,7 @@ CREATE TABLE IF NOT EXISTS Has_Watched (
     FOREIGN KEY (mid) REFERENCES Movies(mid),
     PRIMARY KEY (uid, mid)
 );
+ALTER TABLE Has_Watched CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Involved_In (
     pid INTEGER,
@@ -90,3 +99,4 @@ CREATE TABLE IF NOT EXISTS Involved_In (
     FOREIGN KEY (mid) REFERENCES Movies(mid),
     PRIMARY KEY (pid, mid)
 );
+ALTER TABLE Involved_In CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;

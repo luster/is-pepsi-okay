@@ -238,12 +238,12 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
     for tr in doc.xpath('//table/tr'):
         mid = grab_col(tr, 1)
         if not mid: continue
+        if check_exists(cur, 'Movies', 'mid', 'mid', mid): continue
 
         title = grab_col(tr, 2)
         if not title or title[0:2] != "T:": continue
         title = title.split("T:")[1]
         print '\n\n' + title
-        if check_exists(cur, 'Movies', 'mid', 'mid', mid): continue
 
         # if title != "My Cousin Vinny": continue
 
@@ -304,6 +304,8 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
 
             box_office = wiki_parse(sidebar, 'Box office')
             box_office = convert_to_int(box_office)
+            if not runtime and not languages and not country and not budget and not box_office:
+                continue
 
             QUERY = MOVIE_QUERY + "('%s','%s','%s',%s,'%s','%s',%s,%s,'%s')" % (mid,
                     title,releasedate,runtime,languages,description,budget,box_office,country)
