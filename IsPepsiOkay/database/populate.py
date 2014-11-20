@@ -21,83 +21,97 @@ db = MySQLdb.connect(
     host=BaseConfig.MYSQL_DATABASE_HOST,
     user=BaseConfig.MYSQL_DATABASE_USER,
     passwd=BaseConfig.MYSQL_DATABASE_PASSWORD,
-    db=BaseConfig.MYSQL_DATABASE_DB)
+    db=BaseConfig.MYSQL_DATABASE_DB,
+    charset='utf8',
+    use_unicode=True)
 
 cur = db.cursor()
 
-#
-#ACTOR_QUERY = """INSERT INTO People (pname,pdob) VALUES """
-## Code to generate Actor File Structure
-#with open(DATA_DIR + '/uci/actors.html.better', 'r') as f:
-#    count = 0
-#    soup = BeautifulSoup(f.read())
-#    tbl = soup.findAll('table')
-#    for table in tbl:
-#        for row in table.findAll('tr')[1:]:
-#            cells = row.findAll('td')
-#            if len(cells) > 0:
-#                name = cells[0].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')#.encode('ascii','replace')
-#                ACTOR_QUERY += "('%s'" % (name)
-#                dob = '0000-00-00'
-#                if len(cells) > 5:
-#                    dob = cells[5].contents[0][:]
-#                    try:
-#                        dob = int(dob)
-#                        dob = "%d-01-01" % (dob)
-#                    except:
-#                        dob = '0000-00-00'
-#                        #try:
-#                        #    content = wikipedia.page(name).html()
-#                        #    birth_year = int(re.match('.*born.*(\d{4})', content, re.DOTALL).group(1))
-#                        #    print name + ' ' + str(birth_year)
-#                        #    dob = '%d-01-01' % (birth_year)
-#                        #except:
-#                        #    pass
-#
-#                ACTOR_QUERY += ",'%s')," % (dob)
-#                count += 1
-#            if not count % 10:
-#                print count
-#    ACTOR_QUERY = ACTOR_QUERY[:-1] + ";"
-#
-#print 'Executing Actor Query...'
-#cur.execute(ACTOR_QUERY)
-#actors = cur.fetchall()
-#
-##########
-#
-#PEOPLE_QUERY = """INSERT INTO People (pname,pdob) VALUES """
-#
-#with open(DATA_DIR + '/uci/people.html', 'r') as f:
-#    count = 0
-#    soup = BeautifulSoup(f.read())
-#    tbl = soup.findAll('table')
-#    for table in tbl:
-#        for row in table.findAll('tr')[1:]:
-#            cells = row.findAll('td')
-#            if len(cells) > 6:
-#                #if 'A' not in ''.join(cells[1].contents):
-#                if True:
-#                    first_name = cells[5].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')
-#                    last_name = cells[4].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')
-#                    PEOPLE_QUERY += "('%s %s'" % (first_name, last_name)
-#                    dob = '0000-00-00'
-#                    dob = cells[6].contents[0][:]
-#                    try:
-#                        dob = int(dob)
-#                        dob = "%d-01-01" % (dob)
-#                    except:
-#                        dob = '0000-00-00'
-#
-#                    PEOPLE_QUERY += ",'%s')," % (dob)
-#                    count += 1
-#                if not count % 10:
-#                    print str(count)
-#    PEOPLE_QUERY = PEOPLE_QUERY [:-1] + ";"
-#
-#print 'Executing People Query...'
-#cur.execute(PEOPLE_QUERY)
-#people = cur.fetchall()
+def free_mem():
+    dont = ['os','MySQLdb','sys','re','wikipedia','BeautifulSoup',
+            'PROJECT_DIR','DATA_DIR','BaseConfig','db','cur']
+
+    a = []
+    for var in globals():
+        if "__" not in (var[:2],var[-2:]) and var not in dont:
+            a.append(var)
+    print a
+    for var in a:
+        del globals()[var]
+
+ACTOR_QUERY = """INSERT INTO People (pname,pdob) VALUES """
+# Code to generate Actor File Structure
+with open(DATA_DIR + '/uci/actors.html.better', 'r') as f:
+    count = 0
+    soup = BeautifulSoup(f.read())
+    tbl = soup.findAll('table')
+    for table in tbl:
+        for row in table.findAll('tr')[1:]:
+            cells = row.findAll('td')
+            if len(cells) > 0:
+                name = cells[0].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')#.encode('ascii','replace')
+                ACTOR_QUERY += "('%s'" % (name)
+                dob = '0000-00-00'
+                if len(cells) > 5:
+                    dob = cells[5].contents[0][:]
+                    try:
+                        dob = int(dob)
+                        dob = "%d-01-01" % (dob)
+                    except:
+                        dob = '0000-00-00'
+                        #try:
+                        #    content = wikipedia.page(name).html()
+                        #    birth_year = int(re.match('.*born.*(\d{4})', content, re.DOTALL).group(1))
+                        #    print name + ' ' + str(birth_year)
+                        #    dob = '%d-01-01' % (birth_year)
+                        #except:
+                        #    pass
+
+                ACTOR_QUERY += ",'%s')," % (dob)
+                count += 1
+            if not count % 10:
+                print count
+    ACTOR_QUERY = ACTOR_QUERY[:-1] + ";"
+del soup, tbl
+
+print 'Executing Actor Query...'
+cur.execute(ACTOR_QUERY)
+db.commit()
+
+#########
+
+PEOPLE_QUERY = """INSERT INTO People (pname,pdob) VALUES """
+
+with open(DATA_DIR + '/uci/people.html', 'r') as f:
+    count = 0
+    soup = BeautifulSoup(f.read())
+    tbl = soup.findAll('table')
+    for table in tbl:
+        for row in table.findAll('tr')[1:]:
+            cells = row.findAll('td')
+            if len(cells) > 6:
+                #if 'A' not in ''.join(cells[1].contents):
+                if True:
+                    first_name = cells[5].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')
+                    last_name = cells[4].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')
+                    PEOPLE_QUERY += "('%s %s'" % (first_name, last_name)
+                    dob = '0000-00-00'
+                    dob = cells[6].contents[0][:]
+                    try:
+                        dob = int(dob)
+                        dob = "%d-01-01" % (dob)
+                    except:
+                        dob = '0000-00-00'
+
+                    PEOPLE_QUERY += ",'%s')," % (dob)
+                    count += 1
+                if not count % 10:
+                    print str(count)
+    PEOPLE_QUERY = PEOPLE_QUERY [:-1] + ";"
+del soup, tbl, f
+print 'Executing People Query...'
+cur.execute(PEOPLE_QUERY)
+db.commit()
 
 ####################
 def wiki_parse(sidebar, header_text, multiple=0):
@@ -107,9 +121,9 @@ def wiki_parse(sidebar, header_text, multiple=0):
         if not multiple:
             for s in elem.stripped_strings:
                 # only return first one
-                return s
+                return s.replace("'","''")
         for s in elem.stripped_strings:
-            strs.append(s)
+            strs.append(s.replace("'","''"))
         return strs
         #else:
         #    return elem.text.strip()
@@ -121,7 +135,7 @@ def wiki_parse(sidebar, header_text, multiple=0):
 def grab_col(tr, col_num):
     text = tr.xpath('./td[%d]//text()' % (col_num))
     if text:
-        text = text[0].strip()
+        text = text[0].strip().replace("'","''")
         return text
     return ''
 
@@ -145,14 +159,25 @@ def closest_wiki_page(title, year):
 def convert_to_int(s):
     if not s:
         return 0
+    regex = re.compile(ur'[0-9\,]+',re.UNICODE)
     cl = s.replace('$','').replace(',','')
     try:
         i = int(cl)
     except ValueError:
-        pars = cl.split()
-        i = int(float(pars[0]) * 1000000.)
-
-    return i
+        if 'million' in cl:
+            pars = cl.split()
+            try:
+                i = int(float(pars[0]) * 1000000.)
+                return i
+            except ValueError:
+                i = regex.search(cl)
+                if i:
+                    i = int(float(i.group(0)) * 1000000.)
+                    return i
+    i = regex.search(cl)
+    if i:
+        return i.group(0)
+    return 0
 
 def convert_runtime(r):
     if not r:
@@ -166,6 +191,7 @@ def convert_runtime(r):
     print r + '\tdafuq'
     return 0
 
+#free_mem()
 from lxml import etree
 movie_attrs = "mid,title,mdate,runtime,languages,description,budget,box_office,country"
 MOVIE_QUERY = """INSERT INTO Movies (%s) VALUES """ % (movie_attrs)
@@ -179,17 +205,22 @@ INVOLVED_IN_QUERY = """INSERT INTO Involved_In (%s) VALUES """ % (involved_attrs
 
 def check_exists(cur, table, pkname, chkname, chkval):
     qry = """SELECT %s FROM %s WHERE %s='%s';""" % (pkname, table, chkname, chkval)
-    r = cur.execute(qry)
+    cur.execute(qry)
+    r = cur.fetchone()
     if not r:
         return False
 
     try:
         r = r[0]
+        return r
     except TypeError:
-        return False
+        return r
 
+print 'Starting Main Movie Data'
+import gc
+gc.collect()
 with open(DATA_DIR + '/uci/main.html', 'r') as f:
-    count = 0
+    count = 1
     doc = etree.HTML(f.read())
     for tr in doc.xpath('//table/tr'):
         mid = grab_col(tr, 1)
@@ -198,15 +229,18 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
         title = grab_col(tr, 2)
         if not title or title[0:2] != "T:": continue
         title = title.split("T:")[1]
+        print '\n\n' + title
 
-        if title != "Last Summer": continue
+        # if title != "My Cousin Vinny": continue
 
         rdate = grab_col(tr, 3)
         if not repr_int(rdate): continue
         releasedate = '%s-01-01' % (int(rdate))
 
         genres = grab_col(tr, 8).split(',')
+        print genres
         if not genres: continue
+        if len(genres) == 1 and not genres[0]: continue
         gids = []
         while genres:
             genre = genres.pop().strip()
@@ -270,7 +304,6 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
                 print mg_qry
                 cur.execute(mg_qry)
             db.commit()
-            break
 
 
             # involvement: direct, produce, write, music, act
@@ -278,29 +311,35 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
             produced = wiki_parse(sidebar, 'Produced by', True)
             wrote = wiki_parse(sidebar, 'Written by', True)
             music = wiki_parse(sidebar, 'Music by', True)
-            starred = wiki_parse(sidear, 'Starring', True)
+            starred = wiki_parse(sidebar, 'Starring', True)
 
             # set
             people = set().union(*[directed,produced,wrote,music,starred])
             while people:
                 person = people.pop()
-                pid = check
-
-                pq = PERSON_QUERY + "('%s')" % (person)
-                cur.execute(pq)
-                pid = int(cur.lastrowid)
+                print person
+                pid = check_exists(cur, 'People', 'pid', 'pname', person)
+                print pid
+                if not pid:
+                    pq = PERSON_QUERY + "('%s')" % (person)
+                    print pq
+                    cur.execute(pq)
+                    pid = cur.lastrowid
+                pid = int(pid)
                 db.commit()
+
                 d = 1 if person in directed else 0
                 p = 1 if person in produced else 0
                 w = 1 if person in wrote else 0
                 c = 1 if person in music else 0
                 a = 1 if person in starred else 0
 
-#                ii_qry = INVOLVED_IN_QUERY + "(
+                ii_qry = INVOLVED_IN_QUERY + "(%s,'%s',%s,%s,%s,%s,%s);" % (pid,
+                        mid,d,p,w,c,a)
+                print ii_qry
+                cur.execute(ii_qry)
+                db.commit()
 
-
-            break
-        break
 
 cur.close()
 db.commit()
