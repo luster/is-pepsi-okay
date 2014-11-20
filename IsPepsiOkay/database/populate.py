@@ -39,79 +39,79 @@ def free_mem():
     for var in a:
         del globals()[var]
 
-ACTOR_QUERY = """INSERT INTO People (pname,pdob) VALUES """
-# Code to generate Actor File Structure
-with open(DATA_DIR + '/uci/actors.html.better', 'r') as f:
-    count = 0
-    soup = BeautifulSoup(f.read())
-    tbl = soup.findAll('table')
-    for table in tbl:
-        for row in table.findAll('tr')[1:]:
-            cells = row.findAll('td')
-            if len(cells) > 0:
-                name = cells[0].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')#.encode('ascii','replace')
-                ACTOR_QUERY += "('%s'" % (name)
-                dob = '0000-00-00'
-                if len(cells) > 5:
-                    dob = cells[5].contents[0][:]
-                    try:
-                        dob = int(dob)
-                        dob = "%d-01-01" % (dob)
-                    except:
-                        dob = '0000-00-00'
-                        #try:
-                        #    content = wikipedia.page(name).html()
-                        #    birth_year = int(re.match('.*born.*(\d{4})', content, re.DOTALL).group(1))
-                        #    print name + ' ' + str(birth_year)
-                        #    dob = '%d-01-01' % (birth_year)
-                        #except:
-                        #    pass
-
-                ACTOR_QUERY += ",'%s')," % (dob)
-                count += 1
-            if not count % 10:
-                print count
-    ACTOR_QUERY = ACTOR_QUERY[:-1] + ";"
-del soup, tbl
-
-print 'Executing Actor Query...'
-cur.execute(ACTOR_QUERY)
-db.commit()
-
-#########
-
-PEOPLE_QUERY = """INSERT INTO People (pname,pdob) VALUES """
-
-with open(DATA_DIR + '/uci/people.html', 'r') as f:
-    count = 0
-    soup = BeautifulSoup(f.read())
-    tbl = soup.findAll('table')
-    for table in tbl:
-        for row in table.findAll('tr')[1:]:
-            cells = row.findAll('td')
-            if len(cells) > 6:
-                #if 'A' not in ''.join(cells[1].contents):
-                if True:
-                    first_name = cells[5].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')
-                    last_name = cells[4].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')
-                    PEOPLE_QUERY += "('%s %s'" % (first_name, last_name)
-                    dob = '0000-00-00'
-                    dob = cells[6].contents[0][:]
-                    try:
-                        dob = int(dob)
-                        dob = "%d-01-01" % (dob)
-                    except:
-                        dob = '0000-00-00'
-
-                    PEOPLE_QUERY += ",'%s')," % (dob)
-                    count += 1
-                if not count % 10:
-                    print str(count)
-    PEOPLE_QUERY = PEOPLE_QUERY [:-1] + ";"
-del soup, tbl, f
-print 'Executing People Query...'
-cur.execute(PEOPLE_QUERY)
-db.commit()
+#ACTOR_QUERY = """INSERT INTO People (pname,pdob) VALUES """
+## Code to generate Actor File Structure
+#with open(DATA_DIR + '/uci/actors.html.better', 'r') as f:
+#    count = 0
+#    soup = BeautifulSoup(f.read())
+#    tbl = soup.findAll('table')
+#    for table in tbl:
+#        for row in table.findAll('tr')[1:]:
+#            cells = row.findAll('td')
+#            if len(cells) > 0:
+#                name = cells[0].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')#.encode('ascii','replace')
+#                ACTOR_QUERY += "('%s'" % (name)
+#                dob = '0000-00-00'
+#                if len(cells) > 5:
+#                    dob = cells[5].contents[0][:]
+#                    try:
+#                        dob = int(dob)
+#                        dob = "%d-01-01" % (dob)
+#                    except:
+#                        dob = '0000-00-00'
+#                        #try:
+#                        #    content = wikipedia.page(name).html()
+#                        #    birth_year = int(re.match('.*born.*(\d{4})', content, re.DOTALL).group(1))
+#                        #    print name + ' ' + str(birth_year)
+#                        #    dob = '%d-01-01' % (birth_year)
+#                        #except:
+#                        #    pass
+#
+#                ACTOR_QUERY += ",'%s')," % (dob)
+#                count += 1
+#            if not count % 10:
+#                print count
+#    ACTOR_QUERY = ACTOR_QUERY[:-1] + ";"
+#del soup, tbl
+#
+#print 'Executing Actor Query...'
+#cur.execute(ACTOR_QUERY)
+#db.commit()
+#
+##########
+#
+#PEOPLE_QUERY = """INSERT INTO People (pname,pdob) VALUES """
+#
+#with open(DATA_DIR + '/uci/people.html', 'r') as f:
+#    count = 0
+#    soup = BeautifulSoup(f.read())
+#    tbl = soup.findAll('table')
+#    for table in tbl:
+#        for row in table.findAll('tr')[1:]:
+#            cells = row.findAll('td')
+#            if len(cells) > 6:
+#                #if 'A' not in ''.join(cells[1].contents):
+#                if True:
+#                    first_name = cells[5].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')
+#                    last_name = cells[4].contents[0][1:].replace('"','\"').replace("'",'\"').replace('`','\"')
+#                    PEOPLE_QUERY += "('%s %s'" % (first_name, last_name)
+#                    dob = '0000-00-00'
+#                    dob = cells[6].contents[0][:]
+#                    try:
+#                        dob = int(dob)
+#                        dob = "%d-01-01" % (dob)
+#                    except:
+#                        dob = '0000-00-00'
+#
+#                    PEOPLE_QUERY += ",'%s')," % (dob)
+#                    count += 1
+#                if not count % 10:
+#                    print str(count)
+#    PEOPLE_QUERY = PEOPLE_QUERY [:-1] + ";"
+#del soup, tbl, f
+#print 'Executing People Query...'
+#cur.execute(PEOPLE_QUERY)
+#db.commit()
 
 ####################
 def wiki_parse(sidebar, header_text, multiple=0):
@@ -182,12 +182,25 @@ def convert_to_int(s):
 def convert_runtime(r):
     if not r:
         return 0
+    regex = re.compile('\d+', re.UNICODE)
     if 'minutes' in r:
-        r = r.split()[0]
-        return int(r)
+        m = regex.search(r)
+        if m:
+            m = m.group(0)
+        try:
+            return int(m)
+        except:
+            print m + ' WTFFFFFFFFFF'
+            return 0
     if 'hours' in r:
-        r = r.split()[0]
-        return int(float(r) * 60.)
+        m = regex.search(r)
+        if m:
+            m = m.group(0)
+        try:
+            return int(float(m) * 60.)
+        except:
+            print m + ' WTFFFFFFFFFFFFFFFFFF'
+            return 0
     print r + '\tdafuq'
     return 0
 
@@ -230,6 +243,7 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
         if not title or title[0:2] != "T:": continue
         title = title.split("T:")[1]
         print '\n\n' + title
+        if check_exists(cur, 'Movies', 'mid', 'mid', mid): continue
 
         # if title != "My Cousin Vinny": continue
 
