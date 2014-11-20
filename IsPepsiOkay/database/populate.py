@@ -25,8 +25,6 @@ db = MySQLdb.connect(
 
 cur = db.cursor()
 
-cur.execute('DELETE FROM People;')
-ra = cur.fetchall()
 #
 #ACTOR_QUERY = """INSERT INTO People (pname,pdob) VALUES """
 ## Code to generate Actor File Structure
@@ -145,6 +143,8 @@ def closest_wiki_page(title, year):
             return wikipedia.page(title)
 
 def convert_to_int(s):
+    if not s:
+        return 0
     cl = s.replace('$','').replace(',','')
     try:
         i = int(cl)
@@ -166,10 +166,28 @@ def convert_runtime(r):
     print r + '\tdafuq'
     return 0
 
-
 from lxml import etree
 movie_attrs = "mid,title,mdate,runtime,languages,description,budget,box_office,country"
 MOVIE_QUERY = """INSERT INTO Movies (%s) VALUES """ % (movie_attrs)
+
+GENRE_QUERY = """INSERT INTO Genres (gname) VALUES """
+PERSON_QUERY = """INSERT INTO People (pname) VALUES """
+IS_GENRE_QUERY = """INSERT INTO Is_Genre (mid,gid) VALUES """
+
+involved_attrs = "pid,mid,directed,produced,wrote,composed,acted"
+INVOLVED_IN_QUERY = """INSERT INTO Involved_In (%s) VALUES """ % (involved_attrs)
+
+def check_exists(cur, table, pkname, chkname, chkval):
+    qry = """SELECT %s FROM %s WHERE %s='%s';""" % (pkname, table, chkname, chkval)
+    r = cur.execute(qry)
+    if not r:
+        return False
+
+    try:
+        r = r[0]
+    except TypeError:
+        return False
+
 with open(DATA_DIR + '/uci/main.html', 'r') as f:
     count = 0
     doc = etree.HTML(f.read())
@@ -181,21 +199,29 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
         if not title or title[0:2] != "T:": continue
         title = title.split("T:")[1]
 
+        if title != "Last Summer": continue
+
         rdate = grab_col(tr, 3)
         if not repr_int(rdate): continue
         releasedate = '%s-01-01' % (int(rdate))
 
-        genre = grab_col(tr, 8)
-        if not genre: continue
-
-        if title != "Grease 2": continue
+        genres = grab_col(tr, 8).split(',')
+        if not genres: continue
+        gids = []
+        while genres:
+            genre = genres.pop().strip()
+            if not check_exists(cur, 'Genres', 'gid', 'gname', genre):
+                gq = GENRE_QUERY + "('%s');" % (genre)
+                print gq
+                cur.execute(gq)
+                gids.append(int(cur.lastrowid))
+        db.commit()
 
         page_name = "%s" % (title)
         try:
             wiki = wikipedia.page(page_name)
             summary = wiki.summary
             if 'film' not in summary and 'movie' not in summary and 'directed' not in summary:
-                print 'here'
                 wiki = wikipedia.page(page_name + ' (%s film)' %(rdate))
                 summary = wiki.summary
                 if rdate not in summary:
@@ -210,8 +236,7 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
 
         if wiki and title.lower() in wiki.title.lower():
             count += 1
-            print count
-            print title
+            print str(count) + ' ' + title
             # look for runtime, languages, *keywords, description
             # *tagline, budget, box_office, *mpaa rating, country
             wiki_soup = BeautifulSoup(wiki.html())
@@ -236,11 +261,19 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
                     title,releasedate,runtime,languages,description,budget,box_office,country)
             print QUERY
             cur.execute(QUERY)
-            result = cur.fetchall()
-            print result
+            db.commit()
+
+            # genre & mid
+            while gids:
+                gid = gids.pop()
+                mg_qry = IS_GENRE_QUERY + "('%s',%s)" % (mid,gid)
+                print mg_qry
+                cur.execute(mg_qry)
+            db.commit()
             break
 
-            # involvement: direct, produce, write, music, act=0
+
+            # involvement: direct, produce, write, music, act
             directed = wiki_parse(sidebar, 'Directed by', True)
             produced = wiki_parse(sidebar, 'Produced by', True)
             wrote = wiki_parse(sidebar, 'Written by', True)
@@ -251,7 +284,19 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
             people = set().union(*[directed,produced,wrote,music,starred])
             while people:
                 person = people.pop()
-                #cur.execute('SELECT
+                pid = check
+
+                pq = PERSON_QUERY + "('%s')" % (person)
+                cur.execute(pq)
+                pid = int(cur.lastrowid)
+                db.commit()
+                d = 1 if person in directed else 0
+                p = 1 if person in produced else 0
+                w = 1 if person in wrote else 0
+                c = 1 if person in music else 0
+                a = 1 if person in starred else 0
+
+#                ii_qry = INVOLVED_IN_QUERY + "(
 
 
             break
