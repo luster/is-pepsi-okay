@@ -235,14 +235,22 @@ gc.collect()
 with open(DATA_DIR + '/uci/main.html', 'r') as f:
     count = 1
     doc = etree.HTML(f.read())
+    tmpp = False
     for tr in doc.xpath('//table/tr'):
         mid = grab_col(tr, 1)
+        if mid == 'WlJ10':
+            tmpp = True
+        if not tmpp:
+            print mid
+            continue
+
         if not mid: continue
         if check_exists(cur, 'Movies', 'mid', 'mid', mid): continue
 
         title = grab_col(tr, 2)
         if not title or title[0:2] != "T:": continue
         title = title.split("T:")[1]
+        if not title: continue
         print '\n\n' + title
 
         # if title != "My Cousin Vinny": continue
