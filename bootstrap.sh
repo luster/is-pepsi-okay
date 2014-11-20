@@ -23,8 +23,9 @@ sudo apt-get -y update
 # python requirements
 cd $PROJECT_DIR
 sudo apt-get -y remove python-pip
-wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py > /dev/null 2>&1
 sudo python get-pip.py
+rm get-pip.py
 sudo pip install -r $PROJECT_DIR/requirements.txt
 
 # start web server
@@ -46,6 +47,6 @@ cd $PROJECT_DIR/$PROJECT_NAME
 sudo gunicorn -D --max-requests 1 $PROJECT_NAME:app -b localhost:8000
 
 # mysql initialize
-mysql -uroot -pispepsiokay < $PROJECT_DIR/$PROJECT_NAME/database/schema.sql
+# mysql -uroot -pispepsiokay < $PROJECT_DIR/$PROJECT_NAME/database/schema.sql
 
 sudo apt-get install -y python-mysqldb

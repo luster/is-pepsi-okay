@@ -235,6 +235,9 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
             QUERY = MOVIE_QUERY + "('%s','%s','%s',%s,'%s','%s',%s,%s,'%s')" % (mid,
                     title,releasedate,runtime,languages,description,budget,box_office,country)
             print QUERY
+            cur.execute(QUERY)
+            result = cur.fetchall()
+            print result
             break
 
             # involvement: direct, produce, write, music, act=0
