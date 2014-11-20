@@ -61,7 +61,7 @@ class Database:
             return None
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
-        statement = """UPDATE Users SET is_active = %s""" % (str(is_active))
+        statement = """UPDATE Users SET is_active = %s""" % (str(is_ac
         if email:
             statement += """, email = '%s'""" % email
         if password:
@@ -70,5 +70,5 @@ class Database:
         cursor.execute(statement)
         self.mysql.get_db().commit()
         cursor.close()
-        return User(username, email, password)
-            
+        return User
+        
