@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from flask.ext.login import UserMixin
 
 class User(UserMixin):
@@ -13,6 +14,11 @@ class User(UserMixin):
         
     def get_id(self)
         return str(self.username)
+=======
+
+class User():
+    pass
+>>>>>>> master
 
 class Movie():
     pass

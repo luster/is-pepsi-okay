@@ -1,12 +1,16 @@
 from IsPepsiOkay import app, database
 from flask import render_template, redirect, request, url_for
+<<<<<<< HEAD
 from flask.ext.login import LoginManager, current_user, login_required, login_user, logout_user
 from forms import LoginForm, RegistrationForm, ChangePasswordForm
 import hashlib
+=======
+>>>>>>> master
 
 @app.route('/')
 def index():
     return render_template('index.html')
+<<<<<<< HEAD
     
 @login_manager.user_loader
 def load_user(user_id):
@@ -96,3 +100,5 @@ def delete_account():
     logout_user()
     return render_template("accounts/delete.html", success=success)
 
+=======
+>>>>>>> master

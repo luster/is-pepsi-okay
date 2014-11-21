@@ -1,12 +1,12 @@
 from flask.ext.mysql import MySQL
 from IsPepsiOkay.models import User, Movie, Person, Genre
 
-class Database:
+class Database(object):
 
     def __init__(self, app):
         self.mysql = MySQL()
         self.mysql.init_app(app)
-        
+
     def get_all_users(self):
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
@@ -18,7 +18,7 @@ class Database:
         for row in rows:
             users.append(User(row[0], row[1], row[2]))
         return users
-        
+
     def get_user(self, username=None, email=None, password=None):
         if email is None and username is None:
             return None
@@ -44,7 +44,7 @@ class Database:
         if not u:
             return None
         return User(u[0], u[1], u[2])
-        
+
     def insert_user(self, username, email, password):
         if (not (username and email and password)):
             return None
@@ -55,7 +55,7 @@ class Database:
         self.mysql.get_db().commit()
         cursor.close()
         return User(username, email, password)
-        
+
     def update_user(self, username, email=None, password=None, is_active=True):
         if (not (username) or not (email or password)):
             return None
@@ -71,4 +71,4 @@ class Database:
         self.mysql.get_db().commit()
         cursor.close()
         return User(username, email, password)
-            
+
