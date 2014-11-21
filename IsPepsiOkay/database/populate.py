@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
 import os
-<<<<<<< HEAD
-
-DATA_DIR = os
-=======
 import MySQLdb
 import sys
 import re
@@ -411,5 +407,3 @@ with open(DATA_DIR + '/uci/main.html', 'r') as f:
 cur.close()
 db.commit()
 db.close()
-
->>>>>>> master
