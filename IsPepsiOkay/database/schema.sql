@@ -1,6 +1,10 @@
-CREATE DATABASE IF NOT EXISTS IsPepsiOkay;
+DROP DATABASE IF EXISTS IsPepsiOkay;
+CREATE DATABASE IsPepsiOkay;
 
 USE IsPepsiOkay;
+
+SET collation_connection = ‘utf8_general_ci’;
+ALTER DATABASE IsPepsiOkay CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Users (
     uid INTEGER AUTO_INCREMENT,
@@ -11,7 +15,7 @@ CREATE TABLE IF NOT EXISTS Users (
     PRIMARY KEY (uid),
     UNIQUE (email)
 );
-
+ALTER TABLE Users CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Genres (
     gid INTEGER AUTO_INCREMENT,
@@ -19,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Genres (
     PRIMARY KEY (gid),
     UNIQUE (gname)
 );
-
+ALTER TABLE Genres CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS People (
     pid INTEGER AUTO_INCREMENT,
@@ -27,23 +31,22 @@ CREATE TABLE IF NOT EXISTS People (
     pdob DATE,
     PRIMARY KEY (pid)
 );
+ALTER TABLE People CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Movies (
-    mid INTEGER AUTO_INCREMENT,
+    mid CHAR(32),
     title CHAR(255),
     mdate DATE,
     runtime INTEGER,
     languages CHAR(64),
-    keywords CHAR(128),
-    description VARCHAR(1024),
-    tagline VARCHAR(512),
-    budget REAL,
-    box_office REAL,
-    mrating CHAR(8),
+    description VARCHAR(4096),
+    budget INTEGER,
+    box_office INTEGER,
     country CHAR(64),
     PRIMARY KEY (mid),
     UNIQUE (title, mdate)
 );
+ALTER TABLE Movies CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Likes_Genre (
     uid INTEGER,
@@ -53,6 +56,7 @@ CREATE TABLE IF NOT EXISTS Likes_Genre (
     FOREIGN KEY (gid) REFERENCES Genres(gid),
     PRIMARY KEY (uid, gid)
 );
+ALTER TABLE Likes_Genre CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Likes_Person (
     uid INTEGER,
@@ -62,27 +66,30 @@ CREATE TABLE IF NOT EXISTS Likes_Person (
     FOREIGN KEY (pid) REFERENCES People(pid),
     PRIMARY KEY (uid, pid)
 );
+ALTER TABLE Likes_Person CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Is_Genre (
-    mid INTEGER,
+    mid CHAR(32),
     gid INTEGER,
     FOREIGN KEY (mid) REFERENCES Movies(mid),
     FOREIGN KEY (gid) REFERENCES Genres(gid),
     PRIMARY KEY (mid, gid)
 );
+ALTER TABLE Is_Genre CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Has_Watched (
     uid INTEGER,
-    mid INTEGER,
+    mid CHAR(32),
     urating REAL,
     FOREIGN KEY (uid) REFERENCES Users(uid),
     FOREIGN KEY (mid) REFERENCES Movies(mid),
     PRIMARY KEY (uid, mid)
 );
+ALTER TABLE Has_Watched CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Involved_In (
     pid INTEGER,
-    mid INTEGER,
+    mid CHAR(32),
     directed BOOLEAN,
     produced BOOLEAN,
     wrote BOOLEAN,
@@ -92,3 +99,4 @@ CREATE TABLE IF NOT EXISTS Involved_In (
     FOREIGN KEY (mid) REFERENCES Movies(mid),
     PRIMARY KEY (pid, mid)
 );
+ALTER TABLE Involved_In CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
