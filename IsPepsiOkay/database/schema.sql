@@ -34,14 +34,27 @@ CREATE TABLE IF NOT EXISTS People (
 ALTER TABLE People CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS Movies (
+<<<<<<< HEAD:IsPepsiOkay/database/schema.sql
+    mid INTEGER AUTO_INCREMENT,
+=======
     mid CHAR(32),
+>>>>>>> master:IsPepsiOkay/database/schema.sql
     title CHAR(255),
     mdate DATE,
     runtime INTEGER,
     languages CHAR(64),
+<<<<<<< HEAD:IsPepsiOkay/database/schema.sql
+    keywords CHAR(128),
+    description VARCHAR(1024),
+    tagline VARCHAR(512),
+    budget REAL,
+    box_office REAL,
+    mrating CHAR(8),
+=======
     description VARCHAR(4096),
     budget INTEGER,
     box_office INTEGER,
+>>>>>>> master:IsPepsiOkay/database/schema.sql
     country CHAR(64),
     PRIMARY KEY (mid),
     UNIQUE (title, mdate)

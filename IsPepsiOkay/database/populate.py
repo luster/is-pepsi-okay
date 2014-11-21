@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 
 import os
+<<<<<<< HEAD
+
+DATA_DIR = os
+=======
 import MySQLdb
 import sys
 import re
@@ -408,3 +412,4 @@ cur.close()
 db.commit()
 db.close()
 
+>>>>>>> master
