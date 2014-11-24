@@ -35,7 +35,7 @@ class Database(object):
             query += """email = '%s'""" % (email)
             first = False
         if password:
-            if not first
+            if not first:
                 query += """AND"""
             query += """password = '%s'""" % (password)
         cursor.execute(query)
@@ -66,7 +66,7 @@ class Database(object):
             statement += """, email = '%s'""" % email
         if password:
             statement += """, password = '%s'""" % password
-        statement = += """WHERE username = '%s'""" % unsername
+        statement += """WHERE username = '%s'""" % unsername
         cursor.execute(statement)
         self.mysql.get_db().commit()
         cursor.close()
