@@ -10,7 +10,7 @@ class Database(object):
     def get_all_users(self):
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
-        query = """SELECT username, email, password FROM Users WHERE is_active = True"""
+        query = """SELECT uname, email, pass FROM Users WHERE is_active = True"""
         cursor.execute(query)
         rows = cursor.fetchall()
         cursor.close()
@@ -25,9 +25,9 @@ class Database(object):
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
         first = True
-        query = """SELECT username, email, password FROM Users WHERE"""
+        query = """SELECT uname, email, pass FROM Users WHERE """
         if username:
-            query += """username = '%s'""" % (username)
+            query += """uname = '%s'""" % (username)
             first = False
         if email:
             if not first:
@@ -37,9 +37,9 @@ class Database(object):
         if password:
             if not first:
                 query += """AND"""
-            query += """password = '%s'""" % (password)
+            query += """pass = '%s'""" % (password)
         cursor.execute(query)
-        rows = cursor.fetchall()
+        u = cursor.fetchone()
         cursor.close()
         if not u:
             return None
@@ -50,7 +50,7 @@ class Database(object):
             return None
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
-        statement = """INSERT INTO Users (username, email, password) VALUES ('%s', '%s', '%s')""" % (username, email, password)
+        statement = """INSERT INTO Users (uname, email, pass) VALUES ('%s', '%s', '%s')""" % (username, email, password)
         cursor.execute(statement)
         self.mysql.get_db().commit()
         cursor.close()
@@ -65,8 +65,8 @@ class Database(object):
         if email:
             statement += """, email = '%s'""" % email
         if password:
-            statement += """, password = '%s'""" % password
-        statement += """WHERE username = '%s'""" % unsername
+            statement += """, pass = '%s'""" % password
+        statement += """WHERE uname = '%s'""" % unsername
         cursor.execute(statement)
         self.mysql.get_db().commit()
         cursor.close()

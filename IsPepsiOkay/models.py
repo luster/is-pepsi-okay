@@ -14,9 +14,6 @@ class User(UserMixin):
     def get_id(self):
         return str(self.username)
 
-class User():
-    pass
-
 class Movie():
     pass
 
