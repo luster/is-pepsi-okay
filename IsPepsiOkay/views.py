@@ -8,6 +8,9 @@ import hashlib
 def index():
     return render_template('index.html')
 
+@app.route('/about')
+def about():
+    return 'About Page TODO'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -42,17 +45,15 @@ def register():
     form = RegistrationForm()
     username_error = False
     if request.method == 'POST' and form.validate():
-        #try:
-        if True:
+        try:
             m = hashlib.md5()
             m.update(form.password.data)
-            user = database.insert_user(form.username.data, form.email.data, m.hexdigest())
+            user = database.insert_user(form.username.data, form.email.data, m.hexdigest(), form.dob)
             if user is not None:
                 login_user(user)
-            #flash("Successfully Registered!")
             return redirect(request.args.get("next") or url_for("index"))
-        #except Exception:
-        #    username_error = True
+        except Exception:
+            username_error = True
     return render_template("accounts/register.html", form=form, username_error=username_error)
 
 

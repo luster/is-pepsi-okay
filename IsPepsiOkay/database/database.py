@@ -19,42 +19,46 @@ class Database(object):
             users.append(User(row[0], row[1], row[2]))
         return users
 
-    def get_user(self, username=None, email=None, password=None):
+    def get_user(self, username=None, email=None, password=None, dob=None):
         if email is None and username is None:
             return None
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
         first = True
-        query = """SELECT uname, email, pass FROM Users WHERE """
+        query = """SELECT uname, email, pass, udob FROM Users WHERE """
         if username:
             query += """uname = '%s'""" % (username)
             first = False
         if email:
             if not first:
-                query += """AND"""
+                query += """ AND """
             query += """email = '%s'""" % (email)
             first = False
         if password:
             if not first:
-                query += """AND"""
+                query += """ AND """
             query += """pass = '%s'""" % (password)
+        if dob:
+            if not first:
+                query += """ AND """
+            query += """udob = '%s'""" % (dob)
         cursor.execute(query)
         u = cursor.fetchone()
         cursor.close()
         if not u:
             return None
-        return User(u[0], u[1], u[2])
+        return User(u[0], u[1], u[2], u[3])
 
-    def insert_user(self, username, email, password):
+    def insert_user(self, username, email, password, dob):
         if (not (username and email and password)):
             return None
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
-        statement = """INSERT INTO Users (uname, email, pass) VALUES ('%s', '%s', '%s')""" % (username, email, password)
+        statement = """INSERT INTO Users (uname, email, pass, udob) VALUES ('%s', '%s', '%s', '%s')""" % (username, email, password, dob)
         cursor.execute(statement)
         self.mysql.get_db().commit()
         cursor.close()
-        return User(username, email, password)
+        return User(username, email, password, dob)
 
     def update_user(self, username, email=None, password=None, is_active=True):
         if (not (username) or not (email or password)):

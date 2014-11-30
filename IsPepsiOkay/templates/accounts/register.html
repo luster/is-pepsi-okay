@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    {% include "navigation.html" %}
     <div class="row">
         <div class="twelve columns">
             <h2>Create an account</h2>
@@ -17,6 +18,7 @@
                     <dl>
                         {{ render_field(form.username) }}
                         {{ render_field(form.email) }}
+                        {{ render_field(form.dob) }}
                         {{ render_field(form.password) }}
                         {{ render_field(form.confirm) }}
                     </dl>

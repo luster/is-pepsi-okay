@@ -2,11 +2,12 @@ from flask.ext.login import UserMixin
 
 class User(UserMixin):
 
-    def __init__(self, username, email, password, active=True):
+    def __init__(self, username, email, password, dob, active=True):
         self.username = username
         self.email = email
         self.password = password
         self.active = active
+        self.dob = dob
 
     def is_active(self):
         return self.active
