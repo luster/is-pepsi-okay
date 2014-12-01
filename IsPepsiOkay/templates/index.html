@@ -1,1 +1,20 @@
-Hi
+{% extends "base.html" %}
+
+{% block content %}
+{% include "navigation.html" %}
+<div class="row">
+    <div class="twelve columns">
+        <h1>Is Pepsi Okay?</h1>
+        <p>Movie recommendations for the amateur (e.g. compared with Netflix),
+        much like how Pepsi is the inferior beverage to Coca Cola. Movie</p>
+
+        <input id="movies-auto" class="autocomplete" type="text" />
+        <ul id="movies-auto-list">
+        </ul>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Foundation CSS CDN -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/foundation/5.0.2/css/foundation.min.css">
+<!-- Modernizr CDN -->
+<script src="//cdn.jsdelivr.net/foundation/5.0.2/js/vendor/custom.modernizr.js"></script>
+</head>
+<body>
+{% block content %}
+{% endblock %}
+<!-- jQuery CDN -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<!-- jQuery local fallback -->
+<script>window.$ || document.write('<script src="/local/jquery.min.js"><\/script>')</script>
+<!-- Foundation JS CDN -->
+<script src="//cdn.jsdelivr.net/foundation/5.0.2/js/foundation.min.js"></script>
+<!-- Foundation JS local fallback -->
+<script>window.Foundation || document.write('<script src="/local/foundation.min.js"><\/script>')</script>
+<!-- Initialize Foundation -->
+<script>$(document).foundation();</script>
+<!-- Foundation CSS local fallback -->
+<script>
+$(document).ready(function() {
+        var bodyColor = $('body').css('color');
+        if(bodyColor != 'rgb(34, 34, 34)') {
+        $("head").prepend('<link rel="stylesheet" href="/local/foundation.min.css">');}});
+</script>
+
+<script>
+$('.autocomplete').on('input propertychange paste', function() {
+    var id = this.id;
+    var results = id + "-list";
+    $.ajax({
+      type: "GET",
+      url: "/search/autocomplete/movies",
+      data: "title=" + $('#'+id).val(),
+      dataType: 'json',
+      success: function(d) {
+          $('#'+results).html('');
+          for (var i=0; i<d.length; i++) {
+              $('#'+results).append("<a href='/movies/"+d[i].mid+"'><li>"+d[i].title+"</li></a>");
+          }
+          return;
+      }
+    });
+});
+</script>
+
+</body>
+</html>

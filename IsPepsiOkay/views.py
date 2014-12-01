@@ -1,24 +1,50 @@
-from IsPepsiOkay import app, database
+from IsPepsiOkay import app, database, login_manager
 from flask import render_template, redirect, request, url_for
-<<<<<<< HEAD
 from flask.ext.login import LoginManager, current_user, login_required, login_user, logout_user
 from forms import LoginForm, RegistrationForm, ChangePasswordForm
 import hashlib
-=======
->>>>>>> master
+import json
 
 @app.route('/')
 def index():
     return render_template('index.html')
-<<<<<<< HEAD
-    
+
+@app.route('/about')
+def about():
+    return 'About Page TODO'
+
 @login_manager.user_loader
 def load_user(user_id):
     return database.get_user(user_id)
-    
-#@app.route('/about')
-#def about():
-#    return render_template('about.html')
+
+
+@app.route("/search/autocomplete/movies")
+def search_movie():
+    title = request.args.get('title')
+    if not title:
+        return '{}'
+    return database.get_movies_like(title, 10)
+
+
+@app.route("/movies/<mid>")
+def get_movies(mid):
+    if not mid:
+        return '{}'
+    movie = database.get_movie_by_id(mid)
+    people = database.get_people_from_movie(mid)
+    for person in people:
+        credits = database.get_movie_credits_by_person(movie.mid, person.pid)
+        if credits.directed:
+            movie.directors.append(person)
+        if credits.produced:
+            movie.producers.append(person)
+        if credits.wrote:
+            movie.writers.append(person)
+        if credits.composed:
+            movie.composers.append(person)
+        if credits.acted:
+            movie.actors.append(person)
+    return movie.to_json()
 
 
 @app.route("/accounts/login", methods=["GET", "POST"])
@@ -35,13 +61,15 @@ def login():
         else:
             error=True
     return render_template("accounts/login.html", form=form, error=error)
-    
+
+
 @app.route("/accounts/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(request.args.get("next") or url_for("index"))
-    
+
+
 @app.route("/accounts/register", methods=["GET", "POST"])
 def register():
     form = RegistrationForm()
@@ -50,15 +78,15 @@ def register():
         try:
             m = hashlib.md5()
             m.update(form.password.data)
-            user = database.insert_user(form.username.data, form.email.data, m.hexdigest())
+            user = database.insert_user(form.username.data, form.email.data, m.hexdigest(), form.dob)
             if user is not None:
                 login_user(user)
-            #flash("Successfully Registered!")
             return redirect(request.args.get("next") or url_for("index"))
         except Exception:
-                username_error = True
+            username_error = True
     return render_template("accounts/register.html", form=form, username_error=username_error)
-    
+
+
 @app.route("/accounts/password/change", methods=["GET", "POST"])
 @login_required
 def change_pass():
@@ -75,11 +103,13 @@ def change_pass():
             return redirect(url_for("change_pass_success"))
         error = True
     return render_template("accounts/password_change_form.html", form=form, error=error)
-    
+
+
 @app.route("/accounts/password/change/success")
 def change_pass_success():
     return render_template("accounts/password_change_done.html")
-    
+
+
 @app.route("/accounts/email/change", methods=["GET", "POST"])
 @login_required
 def change_email():
@@ -91,7 +121,8 @@ def change_email():
         if user is not None:
             login_user(user)
     return render_template("accounts/change_email.html", success=success)
-    
+
+
 @app.route("/accounts/delete", methods=["GET", "POST"])
 @login_required
 def delete_account():
@@ -100,5 +131,4 @@ def delete_account():
     logout_user()
     return render_template("accounts/delete.html", success=success)
 
-=======
->>>>>>> master
+

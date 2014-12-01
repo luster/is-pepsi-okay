@@ -1,30 +1,73 @@
-<<<<<<< HEAD
 from flask.ext.login import UserMixin
+import json
 
 class User(UserMixin):
-    
-    def __init__(self, username, email, password, active=True):
+
+    def __init__(self, username, email, password, dob, active=True):
         self.username = username
         self.email = email
         self.password = password
         self.active = active
-        
+        self.dob = dob
+
     def is_active(self):
         return self.active
-        
-    def get_id(self)
+
+    def get_id(self):
         return str(self.username)
-=======
 
-class User():
-    pass
->>>>>>> master
+class Movie(object):
 
-class Movie():
-    pass
+    def __init__(self, mid, title, mdate, runtime, languages, description, budget, box_office, country):
+        self.mid = mid
+        self.title = title
+        self.mdate = mdate
+        self.runtime = runtime
+        self.languages = languages
+        self.description = description
+        self.budget = budget
+        self.box_office = box_office
+        self.country = country
+        self.directors = list()
+        self.writers = list()
+        self.producers = list()
+        self.actors = list()
+        self.composers = list()
 
-class Person():
-    pass
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
-class Genre():
-    pass
+
+class Person(object):
+
+    def __init__(self, pid, pname, pdob):
+        self.pid = pid
+        self.pname = pname
+        self.pdob = pdob
+
+    def get_credits(self):
+        return database.get_credits_by_person(self.pid)
+
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+
+class Credit(object):
+
+    def __init__(self, pid, mid, d, p, w, c, a):
+        self.pid = pid
+        self.mid = mid
+        self.directed = d
+        self.produced = p
+        self.wrote = w
+        self.composed = c
+        self.acted = a
+
+class Genre(object):
+
+    def __init__(self, gid, gname):
+        self.gid = gid
+        self.gname = gname
+
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+
