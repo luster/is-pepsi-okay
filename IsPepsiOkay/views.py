@@ -3,6 +3,7 @@ from flask import render_template, redirect, request, url_for
 from flask.ext.login import LoginManager, current_user, login_required, login_user, logout_user
 from forms import LoginForm, RegistrationForm, ChangePasswordForm
 import hashlib
+import json
 
 @app.route('/')
 def index():
@@ -15,6 +16,35 @@ def about():
 @login_manager.user_loader
 def load_user(user_id):
     return database.get_user(user_id)
+
+
+@app.route("/search/autocomplete/movies")
+def search_movie():
+    title = request.args.get('title')
+    if not title:
+        return '{}'
+    return database.get_movies_like(title)
+
+
+@app.route("/movies/<mid>")
+def get_movies(mid):
+    if not mid:
+        return '{}'
+    movie = database.get_movie_by_id(mid)
+    people = database.get_people_from_movie(mid)
+    for person in people:
+        credits = database.get_movie_credits_by_person(movie.mid, person.pid)
+        if credits.directed:
+            movie.directors.append(person)
+        if credits.produced:
+            movie.producers.append(person)
+        if credits.wrote:
+            movie.writers.append(person)
+        if credits.composed:
+            movie.composers.append(person)
+        if credits.acted:
+            movie.actors.append(person)
+    return movie.to_json()
 
 
 @app.route("/accounts/login", methods=["GET", "POST"])

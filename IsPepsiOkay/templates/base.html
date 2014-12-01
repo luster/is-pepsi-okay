@@ -26,5 +26,26 @@ $(document).ready(function() {
         if(bodyColor != 'rgb(34, 34, 34)') {
         $("head").prepend('<link rel="stylesheet" href="/local/foundation.min.css">');}});
 </script>
+
+<script>
+$('.autocomplete').on('input propertychange paste', function() {
+    var id = this.id;
+    var results = id + "-list";
+    $.ajax({
+      type: "GET",
+      url: "/search/autocomplete/movies",
+      data: "title=" + $('#'+id).val(),
+      dataType: 'json',
+      success: function(d) {
+          $('#'+results).html('');
+          for (var i=0; i<d.length; i++) {
+              $('#'+results).append("<a href='/movies/"+d[i].mid+"'><li>"+d[i].title+"</li></a>");
+          }
+          return;
+      }
+    });
+});
+</script>
+
 </body>
 </html>
