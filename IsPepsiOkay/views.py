@@ -23,7 +23,7 @@ def search_movie():
     title = request.args.get('title')
     if not title:
         return '{}'
-    return database.get_movies_like(title)
+    return database.get_movies_like(title, 10)
 
 
 @app.route("/movies/<mid>")
