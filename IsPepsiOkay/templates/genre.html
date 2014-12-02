@@ -7,12 +7,18 @@
         {% if error %}
         <h3>{{ error }}</h3>
         {% else %}
+        <h2>{{genre}}</h2>
 
-        <h2>{{movie.title}} ({{ movie.mdate }})</h2>
-        {% include "movie_tmp.html" %}
+        {% for movie in movies %}
+        <h4>{{ movie.title }} ({{movie.mdate}})</h4>
+        <div style="display:none;">
+            {% include "movie_tmp.html" %}
+        </div>
+        {% endfor %}
         {% endif %}
 
     </div>
+
 
 </div>
 

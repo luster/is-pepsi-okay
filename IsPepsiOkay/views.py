@@ -86,11 +86,17 @@ def genre_api(gid):
 
 @app.route("/genres/<gid>")
 def genre_page(gid):
+    g = database.get_genre_name(gid)
     m = database.get_movies_by_genre(gid)
+    movies = []
+    for mid in m:
+        movies.append(get_movies(mid))
     error = None
+    if not g:
+        error = "Sorry, genre does not exist!"
     if not m:
         error = "Sorry, genre does not exist!"
-    return render_template("genre.html", movies=m, error=error)
+    return render_template("genre.html", movies=movies, genre=g, error=error)
 
 
 @app.route("/accounts/login", methods=["GET", "POST"])

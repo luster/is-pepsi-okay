@@ -86,7 +86,7 @@ class Database(object):
     def get_movies_like(self, title, limit=5):
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
-        query = """SELECT mid, title FROM Movies WHERE title LIKE '%s%%' LIMIT %s;""" % (title, limit)
+        query = """SELECT mid, title FROM Movies WHERE title LIKE '%s%%' OR title LIKE '%%%s' OR title LIKE '%%%s%%' LIMIT %s;""" % (title, title, title, limit)
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
@@ -104,7 +104,7 @@ class Database(object):
         movie = list(cursor.fetchone())
         r = {}
         lcols = cols.split(",")
-        movie[2] = movie[2].strftime('%Y')
+        movie[2] = movie[2].year
         for (num,val) in enumerate(movie):
             r[lcols[num]] = val
         return Movie(*r)
@@ -120,7 +120,7 @@ class Database(object):
         if not results:
             return None
         movie = list(results)
-        movie[2] = movie[2].strftime('%Y')
+        movie[2] = movie[2].year
         return Movie(*movie)
 
     def get_people_from_movie(self, mid):
@@ -135,7 +135,7 @@ class Database(object):
         people = []
         for person in results:
             if person[2]:
-                person[2] = person[2].strftime('%Y')
+                person[2] = person[2].year
             else:
                 person[2] = '0000'
             people.append(Person(*person))
@@ -187,6 +187,17 @@ class Database(object):
         results = cursor.fetchall()
         results = [result[0] for result in results]
         return results #mids
+
+    def get_genre_name(self, gid):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        query = """SELECT gname FROM Genres WHERE gid=%s;""" % (gid)
+        cursor.execute(query)
+        results = cursor.fetchone()
+        if not results:
+            return None
+        result = results[0]
+        return result #mids
 
 
 
