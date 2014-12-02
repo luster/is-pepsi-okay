@@ -3,6 +3,11 @@ import json
 import locale
 locale.setlocale(locale.LC_ALL, '')
 
+class Tmp(object):
+
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False, indent=4)
+
 class User(UserMixin):
 
     def __init__(self, username, email, password, dob, active=True):

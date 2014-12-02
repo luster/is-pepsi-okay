@@ -2,6 +2,7 @@ from IsPepsiOkay import app, database, login_manager
 from flask import render_template, redirect, request, url_for
 from flask.ext.login import LoginManager, current_user, login_required, login_user, logout_user
 from forms import LoginForm, RegistrationForm, ChangePasswordForm
+from models import Tmp
 import hashlib
 import json
 
@@ -52,6 +53,7 @@ def get_movies(mid):
     return movie
 
 
+
 @app.route("/api/movies/<mid>")
 def movie_api(mid):
     m = get_movies(mid)
@@ -67,6 +69,28 @@ def render_movie(mid):
     if not m:
         error = "Sorry, movie does not exist!"
     return render_template("movie.html", movie=m, error=error)
+
+
+@app.route("/api/genres/<gid>")
+def genre_api(gid):
+    mids = database.get_movies_by_genre(gid)
+    if not mids:
+        return '{}'
+    movies = []
+    for mid in mids:
+        movies.append(get_movies(mid))
+    t = Tmp()
+    t.movies = movies
+    return t.to_json()
+
+
+@app.route("/genres/<gid>")
+def genre_page(gid):
+    m = database.get_movies_by_genre(gid)
+    error = None
+    if not m:
+        error = "Sorry, genre does not exist!"
+    return render_template("genre.html", movies=m, error=error)
 
 
 @app.route("/accounts/login", methods=["GET", "POST"])

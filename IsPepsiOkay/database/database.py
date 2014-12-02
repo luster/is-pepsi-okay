@@ -179,6 +179,16 @@ class Database(object):
         genres = [Genre(*x) for x in results]
         return genres
 
+    def get_movies_by_genre(self, gid, limit=10):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        query = """SELECT mid FROM Is_Genre WHERE gid=%s;""" % (gid)
+        cursor.execute(query)
+        results = cursor.fetchall()
+        results = [result[0] for result in results]
+        return results #mids
+
+
 
 
 
