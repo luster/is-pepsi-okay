@@ -23,14 +23,9 @@ sudo apt-get -y update
 # python requirements
 cd $PROJECT_DIR
 sudo apt-get -y remove python-pip
-<<<<<<< HEAD
-wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
-sudo python get-pip.py
-=======
 wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py > /dev/null 2>&1
 sudo python get-pip.py
 rm get-pip.py
->>>>>>> master
 sudo pip install -r $PROJECT_DIR/requirements.txt
 
 # start web server

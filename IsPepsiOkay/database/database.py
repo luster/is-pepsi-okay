@@ -117,6 +117,8 @@ class Database(object):
         query = """SELECT %s FROM Movies WHERE mid='%s';""" % (cols, mid)
         cursor.execute(query)
         results = cursor.fetchone()
+        if not results:
+            return None
         movie = list(results)
         movie[2] = movie[2].strftime('%Y')
         return Movie(*movie)
@@ -165,6 +167,17 @@ class Database(object):
         results = list(cursor.fetchone())
         credit = Credit(*results)
         return credit
+
+    def get_genre(self, mid):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        cols = "gid,gname"
+        query = """SELECT %s FROM Genres WHERE gid IN (SELECT gid FROM Is_Genre WHERE mid='%s');""" % (cols,mid)
+        cursor.execute(query)
+        results = cursor.fetchall()
+        results = [list(result) for result in results]
+        genres = [Genre(*x) for x in results]
+        return genres
 
 
 

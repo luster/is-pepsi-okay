@@ -1,5 +1,7 @@
 from flask.ext.login import UserMixin
 import json
+import locale
+locale.setlocale(locale.LC_ALL, '')
 
 class User(UserMixin):
 
@@ -23,19 +25,20 @@ class Movie(object):
         self.title = title
         self.mdate = mdate
         self.runtime = runtime
-        self.languages = languages
+        self.languages = languages.split(",")
         self.description = description
-        self.budget = budget
-        self.box_office = box_office
-        self.country = country
+        self.budget = locale.currency(budget, grouping=True)[:-3]
+        self.box_office = locale.currency(box_office, grouping=True)[:-3]
+        self.country = country.split(",")
         self.directors = list()
         self.writers = list()
         self.producers = list()
         self.actors = list()
         self.composers = list()
+        self.genres = list()
 
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False, indent=4)
 
 
 class Person(object):
@@ -49,7 +52,7 @@ class Person(object):
         return database.get_credits_by_person(self.pid)
 
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False, indent=4)
 
 class Credit(object):
 
@@ -69,5 +72,5 @@ class Genre(object):
         self.gname = gname
 
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False, indent=4)
 

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "navigation.html" %}
+<div class="row">
+    <div class="twelve columns">
+        {% if error %}
+        <h3>{{ error }}</h3>
+        {% else %}
+        <h2>{{movie.title}} ({{ movie.mdate }})</h2>
+        <p>{{movie.description}}</p>
+
+        <table>
+            {% if movie.directors %}
+            <tr>
+                <th>Directed by</th>
+                {% for p in movie.directors %}
+                    <td><a href="/people/{{ p.pid }}">{{ p.pname }}</a></td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+
+            {% if movie.producers %}
+            <tr>
+                <th>Produced by</th>
+                {% for p in movie.producers %}
+                    <td><a href="/people/{{ p.pid }}">{{ p.pname }}</a></td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+
+            {% if movie.writers %}
+            <tr>
+                <th>Written by</th>
+                {% for p in movie.writers %}
+                    <td><a href="/people/{{ p.pid }}">{{ p.pname }}</a></td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+
+            {% if movie.actors %}
+            <tr>
+                <th>Starring</th>
+                {% for p in movie.actors %}
+                    <td><a href="/people/{{ p.pid }}">{{ p.pname }}</a></td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+
+            {% if movie.composers %}
+            <tr>
+                <th>Music by</th>
+                {% for p in movie.composers %}
+                    <td><a href="/people/{{ p.pid }}">{{ p.pname }}</a></td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+
+            {% if movie.genres %}
+            <tr>
+                <th>Genre(s)</th>
+                {% for g in movie.genres %}
+                    <td><a href="/genres/{{ g.gid }}">{{ g.gname }}</a></td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+
+            {% if movie.languages %}
+            <tr>
+                <th>Language(s)</th>
+                {% for l in movie.languages %}
+                    <td>{{ l }}</td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+
+            {% if movie.country%}
+            <tr>
+                <th>Country</th>
+                {% for c in movie.country %}
+                    <td>{{ c }}</td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+
+            {% if movie.runtime %}
+            <tr>
+                <th>Runtime</th><td>{{movie.runtime}} minutes</td>
+            </tr>
+            {% endif %}
+
+            {% if movie.budget %}
+            <tr>
+                <th>Budget</th><td>{{movie.budget}}</td>
+            </tr>
+            {% endif %}
+
+            {% if movie.box_office %}
+            <tr>
+                <th>Box Office</th><td>{{movie.box_office}}</td>
+            </tr>
+            {% endif %}
+
+        {% endif %}
+
+        </div>
+
+
+    </div>
+
+    {% endblock %}

@@ -25,13 +25,14 @@ def search_movie():
         return '{}'
     return database.get_movies_like(title, 10)
 
-
-@app.route("/movies/<mid>")
 def get_movies(mid):
     if not mid:
-        return '{}'
+        return None
     movie = database.get_movie_by_id(mid)
+    if not movie:
+        return None
     people = database.get_people_from_movie(mid)
+    genres = database.get_genre(mid)
     for person in people:
         credits = database.get_movie_credits_by_person(movie.mid, person.pid)
         if credits.directed:
@@ -44,8 +45,23 @@ def get_movies(mid):
             movie.composers.append(person)
         if credits.acted:
             movie.actors.append(person)
-    return movie.to_json()
+    movie.genres = genres
+    return movie
 
+@app.route("/api/movies/<mid>")
+def movie_api(mid):
+    m = get_movies(mid)
+    if not m:
+        return '{}'
+    return m.to_json()
+
+@app.route("/movies/<mid>")
+def render_movie(mid):
+    m = get_movies(mid)
+    error = None
+    if not m:
+        error = "Sorry, movie does not exist!"
+    return render_template("movie.html", movie=m, error=error)
 
 @app.route("/accounts/login", methods=["GET", "POST"])
 def login():
