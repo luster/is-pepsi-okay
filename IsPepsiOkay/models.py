@@ -27,8 +27,8 @@ class Movie(object):
         self.runtime = runtime
         self.languages = languages.split(",")
         self.description = description
-        self.budget = locale.currency(budget, grouping=True)[:-3]
-        self.box_office = locale.currency(box_office, grouping=True)[:-3]
+        self.budget = locale.currency(budget, grouping=True)[:-3] if budget else None
+        self.box_office = locale.currency(box_office, grouping=True)[:-3] if box_office else None
         self.country = country.split(",")
         self.directors = list()
         self.writers = list()

@@ -9,9 +9,11 @@ import json
 def index():
     return render_template('index.html')
 
+
 @app.route('/about')
 def about():
     return 'About Page TODO'
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -24,6 +26,7 @@ def search_movie():
     if not title:
         return '{}'
     return database.get_movies_like(title, 10)
+
 
 def get_movies(mid):
     if not mid:
@@ -48,12 +51,14 @@ def get_movies(mid):
     movie.genres = genres
     return movie
 
+
 @app.route("/api/movies/<mid>")
 def movie_api(mid):
     m = get_movies(mid)
     if not m:
         return '{}'
     return m.to_json()
+
 
 @app.route("/movies/<mid>")
 def render_movie(mid):
@@ -62,6 +67,7 @@ def render_movie(mid):
     if not m:
         error = "Sorry, movie does not exist!"
     return render_template("movie.html", movie=m, error=error)
+
 
 @app.route("/accounts/login", methods=["GET", "POST"])
 def login():
