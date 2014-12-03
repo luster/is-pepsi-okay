@@ -15,13 +15,13 @@ class Database(object):
     def get_all_users(self):
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
-        query = """SELECT uname, email, pass FROM Users WHERE is_active = True"""
+        query = """SELECT uid, uname, email, pass FROM Users WHERE is_active = True"""
         cursor.execute(query)
         rows = cursor.fetchall()
         cursor.close()
         users = []
         for row in rows:
-            users.append(User(row[0], row[1], row[2]))
+            users.append(User(row[0], row[1], row[2], row[3]))
         return users
 
     def get_user(self, username=None, email=None, password=None, dob=None):
@@ -30,7 +30,7 @@ class Database(object):
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
         first = True
-        query = """SELECT uname, email, pass, udob FROM Users WHERE """
+        query = """SELECT uid, uname, email, pass, udob FROM Users WHERE """
         if username:
             query += """uname = '%s'""" % (username)
             first = False
@@ -52,7 +52,8 @@ class Database(object):
         cursor.close()
         if not u:
             return None
-        return User(u[0], u[1], u[2], u[3])
+        print u
+        return User(u[0], u[1], u[2], u[3], u[4])
 
     def insert_user(self, username, email, password, dob):
         if (not (username and email and password)):

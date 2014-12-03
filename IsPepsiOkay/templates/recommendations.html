@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "navigation.html" %}
+<div class="row">
+    <div class="twelve columns">
+        {% if error %}
+        <h3>{{ error }}</h3>
+        {% else %}
+        TODO: select 3 Movies, 3 People, 3 Genres by autocomplete
+        Then return recommendations
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -21,6 +21,15 @@ def load_user(user_id):
     return database.get_user(user_id)
 
 
+@app.route("/recommendations")
+def recommendations():
+    uid = current_user.get_id()
+    if not uid:
+        return redirect("/accounts/login")
+
+    return render_template('recommendations.html')
+
+
 @app.route("/search/autocomplete/movies")
 def search_movie():
     title = request.args.get('title')

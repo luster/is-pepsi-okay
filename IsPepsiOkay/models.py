@@ -18,7 +18,8 @@ class DTmp(object):
 
 class User(UserMixin):
 
-    def __init__(self, username, email, password, dob, active=True):
+    def __init__(self, uid, username, email, password, dob, active=True):
+        self.uid = uid
         self.username = username
         self.email = email
         self.password = password
