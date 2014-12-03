@@ -8,6 +8,14 @@ class Tmp(object):
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False, indent=4)
 
+class DTmp(object):
+    def __init__(self, **kwargs):
+        for key, val in kwargs.items():
+            setattr(self, key, val)
+
+    def to_json(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=False, indent=4)
+
 class User(UserMixin):
 
     def __init__(self, username, email, password, dob, active=True):

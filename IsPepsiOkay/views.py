@@ -53,7 +53,6 @@ def get_movies(mid):
     return movie
 
 
-
 @app.route("/api/movies/<mid>")
 def movie_api(mid):
     m = get_movies(mid)
@@ -97,6 +96,18 @@ def genre_page(gid):
     if not m:
         error = "Sorry, genre does not exist!"
     return render_template("genre.html", movies=movies, genre=g, error=error)
+
+
+@app.route("/people/<pid>")
+def person_page(pid):
+    p = database.get_person_name(pid)
+    m = database.get_movies_by_person(pid)
+    error = None
+    if not p:
+        error = "Sorry, person does not exist!"
+    if not m:
+        error = "Sorry, person does not exist!"
+    return render_template("person.html", movies=m, person=p, error=error)
 
 
 @app.route("/accounts/login", methods=["GET", "POST"])

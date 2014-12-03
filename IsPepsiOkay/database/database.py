@@ -1,6 +1,6 @@
 from flask.ext.mysql import MySQL
 from flask import jsonify
-from IsPepsiOkay.models import User, Movie, Person, Genre, Credit
+from IsPepsiOkay.models import User, Movie, Person, Genre, Credit, DTmp
 import json
 from datetime import datetime
 
@@ -120,7 +120,8 @@ class Database(object):
         if not results:
             return None
         movie = list(results)
-        movie[2] = movie[2].year
+        if movie[2]:
+            movie[2] = movie[2].year
         return Movie(*movie)
 
     def get_people_from_movie(self, mid):
@@ -197,9 +198,39 @@ class Database(object):
         if not results:
             return None
         result = results[0]
-        return result #mids
+        return result
 
+    def get_person_name(self, pid):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        query = """SELECT pname FROM People WHERE pid=%s;""" % (pid)
+        cursor.execute(query)
+        results = cursor.fetchone()
+        if not results:
+            return None
+        result = results[0]
+        return result #pids
 
-
-
+    def get_movies_by_person(self, pid):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        cols = "Involved_In.mid,mdate,title,directed,produced,wrote,composed,acted"
+        query = """SELECT %s FROM Involved_In JOIN Movies ON Involved_In.mid=Movies.mid WHERE pid=%s;""" % (cols,pid)
+        cursor.execute(query)
+        results = cursor.fetchall()
+        lcols = cols.split(",")
+        lcols[0] = "mid"
+        if not results:
+            return None
+        results = [list(result) for result in results]
+        for i in xrange(len(results)):
+            if results[1]:
+                results[i][1] = results[i][1].year
+        movies = []
+        for idx1,m in enumerate(results):
+            tmp = {}
+            for idx2,col in enumerate(lcols):
+                tmp[col]=m[idx2]
+            movies.append(DTmp(**tmp))
+        return movies
 
