@@ -1,6 +1,11 @@
 <div id="navigation">
     <ul class="button-group radius">
         <li><a href="{{ url_for('index') }}" class="button radius secondary medium">Home</a></li>
-        <li><a href="{{ url_for('about') }}" class="button radius secondary medium">About</a></li>
+        {% if current_user.is_authenticated() %}
+        <li><a href="{{ url_for('logout') }}" class="button radius secondary medium">Logout</a></li>
+        {% else %}
+        <li><a href="{{ url_for('login') }}" class="button radius secondary medium">Login</a></li>
+        <li><a href="{{ url_for('register') }}" class="button radius secondary medium">Sign Up</a></li>
+        {% endif %}
     </ul>
 </div>
