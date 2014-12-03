@@ -29,6 +29,14 @@ def search_movie():
     return database.get_movies_like(title, 10)
 
 
+@app.route("/search/autocomplete/people")
+def search_people():
+    person = request.args.get('title')
+    if not person:
+        return '{}'
+    return database.get_people_like(person, 10)
+
+
 def get_movies(mid):
     if not mid:
         return None

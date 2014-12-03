@@ -83,6 +83,18 @@ class Database(object):
 
     ####### MOVIES #######
 
+    def get_people_like(self, pname, limit=10):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        query = """SELECT pid, pname FROM People WHERE pname LIKE '%s%%' OR pname LIKE '%%%s' OR pname LIKE '%%%s%%' LIMIT %s;""" % (pname, pname, pname, limit)
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        r = []
+        for result in results:
+            r.append(dict(id=result[0],name=result[1]))
+        return json.dumps(r)
+
     def get_movies_like(self, title, limit=5):
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()
@@ -92,7 +104,7 @@ class Database(object):
         cursor.close()
         r = []
         for result in results:
-            r.append(dict(mid=result[0],title=result[1]))
+            r.append(dict(id=result[0],name=result[1]))
         return json.dumps(r)
 
     def get_movie_by_id(self, mid):
@@ -224,7 +236,7 @@ class Database(object):
             return None
         results = [list(result) for result in results]
         for i in xrange(len(results)):
-            if results[1]:
+            if results[i][1]:
                 results[i][1] = results[i][1].year
         movies = []
         for idx1,m in enumerate(results):

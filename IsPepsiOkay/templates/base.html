@@ -31,15 +31,16 @@ $(document).ready(function() {
 $('.autocomplete').on('input propertychange paste', function() {
     var id = this.id;
     var results = id + "-list";
+    var searchType = id.split(/-/)[0];
     $.ajax({
       type: "GET",
-      url: "/search/autocomplete/movies",
+      url: "/search/autocomplete/"+searchType,
       data: "title=" + $('#'+id).val(),
       dataType: 'json',
       success: function(d) {
           $('#'+results).html('');
           for (var i=0; i<d.length; i++) {
-              $('#'+results).append("<a href='/movies/"+d[i].mid+"'><li>"+d[i].title+"</li></a>");
+              $('#'+results).append("<a href='/"+searchType+"/"+d[i].id+"'><li>"+d[i].name+"</li></a>");
           }
           return;
       }
