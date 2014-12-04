@@ -70,15 +70,15 @@ $('.autocomplete').on('input propertychange paste', function() {
             html += "<a href='/" + searchType + "/" + d[i].id + "'>";
             html += "<span>" + d[i].name;
             html += "</span></a>";
-            html += "<span class='rateit' style='display:none;'></span></li>";
+            html += "<span id='ri-"+d[i].id+"' class='rateit' style='display:none;' onClick='rate(\"ri-"+d[i].id+"\");'></span></li>";
             //$('#'+results).append("<a href='/"+searchType+"/"+d[i].id+"'><li>"+d[i].name+"</li></a>");
             $('#'+results).append(html);
         }
         $(function () { $('div.rateit, span.rateit').rateit(); });
-        return;
     }
     });
 });
+
 </script>
 <script>
 function review(iid) {
@@ -92,6 +92,14 @@ function review(iid) {
     var id = t.id.split(/-/)[2];
     return;
 };
+</script>
+<script type="text/javascript">
+function rate(rii){
+    var ri = $('#'+rii);
+    var value = ri.rateit('value');
+    // AJAX call to insert, remove, update rating
+    return;
+}
 </script>
 
 </body>
