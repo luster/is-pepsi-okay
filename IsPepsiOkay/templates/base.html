@@ -4,11 +4,33 @@
 <!-- Foundation CSS CDN -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/foundation/5.0.2/css/foundation.min.css">
 <!-- Modernizr CDN -->
-<script src="//cdn.jsdelivr.net/foundation/5.0.2/js/vendor/custom.modernizr.js"></script>
+<!-- bleh
+<style>
+* { color: white !important; }
+body {
+    text-shadow: 1px white;
+    background-image: url("static/img/bg.jpg");
+    background-color: #0D487F;
+    background-size: cover;
+    background-repeat: none;
+    color: white !important;
+}
+#navigation, .button-group {
+    margin: 0 auto !important;
+}
+</style>
+-->
+<style>
+.chk, .myrateit {
+    margin-right: 10px !important;
+}
+</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/rateit.css')}}">
 </head>
 <body>
 {% block content %}
 {% endblock %}
+<script src="//cdn.jsdelivr.net/foundation/5.0.2/js/vendor/custom.modernizr.js"></script>
 <!-- jQuery CDN -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 <!-- jQuery local fallback -->
@@ -26,26 +48,50 @@ $(document).ready(function() {
         if(bodyColor != 'rgb(34, 34, 34)') {
         $("head").prepend('<link rel="stylesheet" href="/local/foundation.min.css">');}});
 </script>
+<script src="{{ url_for('static', filename='js/jquery.rateit.min.js') }}"></script>
 
 <script>
 $('.autocomplete').on('input propertychange paste', function() {
     var id = this.id;
     var results = id + "-list";
     var searchType = id.split(/-/)[0];
+    var html;
     $.ajax({
-      type: "GET",
-      url: "/search/autocomplete/"+searchType,
-      data: "title=" + $('#'+id).val(),
-      dataType: 'json',
-      success: function(d) {
-          $('#'+results).html('');
-          for (var i=0; i<d.length; i++) {
-              $('#'+results).append("<a href='/"+searchType+"/"+d[i].id+"'><li>"+d[i].name+"</li></a>");
-          }
-          return;
-      }
+        type: "GET",
+        url: "/search/autocomplete/"+searchType,
+        data: "title=" + $('#'+id).val(),
+        dataType: 'json',
+        success: function(d) {
+        $('#'+results).html('');
+        for (var i=0; i<d.length; i++) {
+            var iid='likes-'+searchType+'-'+d[i].id;
+            html = "<li id='"+d[i].id+"'><input id='likes-" + searchType + "-" + d[i].id + "'";
+            html += " type='checkbox' class='chk' onClick='review(\""+iid+"\");'>";
+            html += "<a href='/" + searchType + "/" + d[i].id + "'>";
+            html += "<span>" + d[i].name;
+            html += "</span></a>";
+            html += "<span class='rateit' style='display:none;'></span></li>";
+            //$('#'+results).append("<a href='/"+searchType+"/"+d[i].id+"'><li>"+d[i].name+"</li></a>");
+            $('#'+results).append(html);
+        }
+        $(function () { $('div.rateit, span.rateit').rateit(); });
+        return;
+    }
     });
 });
+</script>
+<script>
+function review(iid) {
+    var e = $('#'+iid);
+    var t = e[0];
+    if (!t.checked) {
+        e.parent().children('.rateit')[0].style.cssText='display:none;';
+        return;
+    }
+    e.parent().children('.rateit')[0].style.cssText='display:inline-block;';
+    var id = t.id.split(/-/)[2];
+    return;
+};
 </script>
 
 </body>
