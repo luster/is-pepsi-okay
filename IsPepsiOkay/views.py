@@ -6,8 +6,10 @@ from models import Tmp
 import hashlib
 import json
 
+
 @app.route('/')
 def index():
+    print database.get_user(username=current_user.get_id()).uid
     return render_template('index.html')
 
 
@@ -125,6 +127,27 @@ def person_page(pid):
     if not m:
         error = "Sorry, person does not exist!"
     return render_template("person.html", movies=m, person=p, error=error)
+
+
+@app.route("/rate/<otype>/<oid>")
+def rate_object(otype, oid):
+    # otype: movies, people, genres
+    # oid: primary key for object type
+    # glike, plike, urating
+    rating = float(request.args.get('rating', 0))
+    if not current_user.is_authenticated():
+        return '0'
+    uid = database.get_user(username=current_user.get_id()).uid
+    otypes = ['movies', 'people', 'genres']
+    if otype not in otypes:
+        return '0'
+    pkey_name = otype[0] + 'id'; # mid, pid, gid
+    table = 'Likes_'+otype.capitalize()
+    if otype == 'movies':
+        table = 'Has_Watched'
+    success = database.rate(table, uid, pkey_name, oid, rating)
+
+    return str(rating)
 
 
 @app.route("/accounts/login", methods=["GET", "POST"])

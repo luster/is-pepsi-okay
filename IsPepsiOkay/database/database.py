@@ -52,7 +52,6 @@ class Database(object):
         cursor.close()
         if not u:
             return None
-        print u
         return User(u[0], u[1], u[2], u[3], u[4])
 
     def insert_user(self, username, email, password, dob):
@@ -115,6 +114,7 @@ class Database(object):
         query = """SELECT %s FROM Movies WHERE mid='%s';""" % (cols, mid)
         cursor.execute(query)
         movie = list(cursor.fetchone())
+        cursor.close()
         r = {}
         lcols = cols.split(",")
         movie[2] = movie[2].year
@@ -130,6 +130,7 @@ class Database(object):
         query = """SELECT %s FROM Movies WHERE mid='%s';""" % (cols, mid)
         cursor.execute(query)
         results = cursor.fetchone()
+        cursor.close()
         if not results:
             return None
         movie = list(results)
@@ -145,6 +146,7 @@ class Database(object):
         query = """SELECT %s FROM Involved_In INNER JOIN People ON People.pid=Involved_In.pid WHERE mid='%s'""" % (cols, mid)
         cursor.execute(query)
         results = cursor.fetchall()
+        cursor.close()
         results = [list(result) for result in results]
         people = []
         for person in results:
@@ -163,6 +165,7 @@ class Database(object):
         query = """SELECT %s FROM Involved_In INNER JOIN Movies ON Involved_In.mid=Movies.mid WHERE pid='%s'""" % (cols, pid)
         cursor.execute(query)
         results = list(cursor.fetchall())
+        cursor.close()
         credits = []
         for credit in results:
             c = {}
@@ -179,6 +182,7 @@ class Database(object):
         query = """SELECT %s FROM Involved_In WHERE pid='%s' AND mid='%s'""" % (cols, pid, mid)
         cursor.execute(query)
         results = list(cursor.fetchone())
+        cursor.close()
         credit = Credit(*results)
         return credit
 
@@ -189,6 +193,7 @@ class Database(object):
         query = """SELECT %s FROM Genres WHERE gid IN (SELECT gid FROM Is_Genre WHERE mid='%s');""" % (cols,mid)
         cursor.execute(query)
         results = cursor.fetchall()
+        cursor.close()
         results = [list(result) for result in results]
         genres = [Genre(*x) for x in results]
         return genres
@@ -199,6 +204,7 @@ class Database(object):
         query = """SELECT mid FROM Is_Genre WHERE gid=%s ORDER BY RAND() LIMIT %s;""" % (gid, limit)
         cursor.execute(query)
         results = cursor.fetchall()
+        cursor.close()
         results = [result[0] for result in results]
         return results #mids
 
@@ -208,6 +214,7 @@ class Database(object):
         query = """SELECT gname FROM Genres WHERE gid=%s;""" % (gid)
         cursor.execute(query)
         results = cursor.fetchone()
+        cursor.close()
         if not results:
             return None
         result = results[0]
@@ -219,6 +226,7 @@ class Database(object):
         query = """SELECT pname FROM People WHERE pid=%s;""" % (pid)
         cursor.execute(query)
         results = cursor.fetchone()
+        cursor.close()
         if not results:
             return None
         result = results[0]
@@ -231,6 +239,7 @@ class Database(object):
         query = """SELECT %s FROM Involved_In JOIN Movies ON Involved_In.mid=Movies.mid WHERE pid=%s;""" % (cols,pid)
         cursor.execute(query)
         results = cursor.fetchall()
+        cursor.close()
         lcols = cols.split(",")
         lcols[0] = "mid"
         if not results:
@@ -246,4 +255,17 @@ class Database(object):
                 tmp[col]=m[idx2]
             movies.append(DTmp(**tmp))
         return movies
+
+    def rate(self, table, uid, pkey_name, oid, rating):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        query = """INSERT INTO %s (uid,%s,urating) VALUES ('%s','%s','%s') ON DUPLICATE KEY UPDATE urating=VALUES(urating)""" % (table, pkey_name, uid, oid, rating)
+        cursor.execute(query)
+        results = cursor.fetchone()
+        self.mysql.get_db().commit()
+        cursor.close()
+        if not results:
+            return None
+        results = list(results)
+        return results
 

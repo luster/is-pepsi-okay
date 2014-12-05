@@ -66,11 +66,12 @@ $('.autocomplete').on('input propertychange paste', function() {
         for (var i=0; i<d.length; i++) {
             var iid='likes-'+searchType+'-'+d[i].id;
             html = "<li id='"+d[i].id+"'><input id='likes-" + searchType + "-" + d[i].id + "'";
-            html += " type='checkbox' class='chk' onClick='review(\""+iid+"\");'>";
-            html += "<a href='/" + searchType + "/" + d[i].id + "'>";
+            html += " type='checkbox' class='chk' onClick='review(\""+iid+"\");'";
+            if d
+            html += "><a href='/" + searchType + "/" + d[i].id + "'>";
             html += "<span>" + d[i].name;
             html += "</span></a>";
-            html += "<span id='ri-"+d[i].id+"' class='rateit' style='display:none;' onClick='rate(\"ri-"+d[i].id+"\");'></span></li>";
+            html += "<span id='ri-"+d[i].id+"' data-otype='"+searchType+"' data-oid='"+d[i].id+"' class='rateit' style='display:none;' onClick='rate(\"ri-"+d[i].id+"\");'></span></li>";
             //$('#'+results).append("<a href='/"+searchType+"/"+d[i].id+"'><li>"+d[i].name+"</li></a>");
             $('#'+results).append(html);
         }
@@ -81,6 +82,7 @@ $('.autocomplete').on('input propertychange paste', function() {
 
 </script>
 <script>
+
 function review(iid) {
     var e = $('#'+iid);
     var t = e[0];
@@ -96,8 +98,20 @@ function review(iid) {
 <script type="text/javascript">
 function rate(rii){
     var ri = $('#'+rii);
+    var otype = ri.data('otype');
+    var oid = ri.data('oid');
     var value = ri.rateit('value');
-    // AJAX call to insert, remove, update rating
+
+    url = '/rate/' + otype + '/' + oid;
+    $.ajax({
+        type: "GET",
+        url: url,
+        data: "rating="+value,
+        success: function(d) {
+            return;
+        }
+    });
+
     return;
 }
 </script>
