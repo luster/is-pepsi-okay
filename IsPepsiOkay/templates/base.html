@@ -64,14 +64,24 @@ $('.autocomplete').on('input propertychange paste', function() {
         success: function(d) {
         $('#'+results).html('');
         for (var i=0; i<d.length; i++) {
+            // check if there's a rating
+            // if so, update checkbox and preset rating
+            var rating = get_rating(d[i].id, searchType);
+            var checked = rating.is_checked; // true, false
+            var value = rating.value; // 0, 0.5, ..., 5
+            //var checked = true;
+            //var value = 0.5;
+
             var iid='likes-'+searchType+'-'+d[i].id;
             html = "<li id='"+d[i].id+"'><input id='likes-" + searchType + "-" + d[i].id + "'";
             html += " type='checkbox' class='chk' onClick='review(\""+iid+"\");'";
-            if d
+            if (checked) { html += " checked"; }
             html += "><a href='/" + searchType + "/" + d[i].id + "'>";
             html += "<span>" + d[i].name;
             html += "</span></a>";
-            html += "<span id='ri-"+d[i].id+"' data-otype='"+searchType+"' data-oid='"+d[i].id+"' class='rateit' style='display:none;' onClick='rate(\"ri-"+d[i].id+"\");'></span></li>";
+            html += "<span id='ri-"+d[i].id+"' data-otype='"+searchType+"' data-oid='"+d[i].id+"' class='rateit' data-rateit-value='"+value+"' data-rateit-ispreset='true'";
+            if (!checked) { html += " style='display:none;'"; }
+            html += " onClick='rate(\"ri-"+d[i].id+"\");'></span></li>";
             //$('#'+results).append("<a href='/"+searchType+"/"+d[i].id+"'><li>"+d[i].name+"</li></a>");
             $('#'+results).append(html);
         }
@@ -82,16 +92,35 @@ $('.autocomplete').on('input propertychange paste', function() {
 
 </script>
 <script>
+function get_rating(id, searchType) {
+    // id is the pkey for type searchType (movies, people, genres)
+    var url = '/rate/' + searchType + '/' + id;
+    var x;
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: 'json',
+        async: false,
+        success: function(d) {
+            x = d;
+        }
+    });
+
+    return {is_checked: x.checked, value: x.rating}
+}
 
 function review(iid) {
     var e = $('#'+iid);
     var t = e[0];
     if (!t.checked) {
         e.parent().children('.rateit')[0].style.cssText='display:none;';
+        // also, call function to remove review from db
+        //TODO
         return;
     }
     e.parent().children('.rateit')[0].style.cssText='display:inline-block;';
-    var id = t.id.split(/-/)[2];
+    //var id = t.id.split(/-/)[2];
     return;
 };
 </script>
@@ -104,9 +133,10 @@ function rate(rii){
 
     url = '/rate/' + otype + '/' + oid;
     $.ajax({
-        type: "GET",
+        type: "POST",
+        contentType: "application/json",
         url: url,
-        data: "rating="+value,
+        data: JSON.stringify({rating: value}),
         success: function(d) {
             return;
         }

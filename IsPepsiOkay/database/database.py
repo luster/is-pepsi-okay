@@ -269,3 +269,14 @@ class Database(object):
         results = list(results)
         return results
 
+    def get_rating(self, table, uid, pkey_name, oid):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        query = """SELECT urating FROM %s WHERE uid=%s AND %s='%s';""" % (table, uid, pkey_name, oid)
+        cursor.execute(query)
+        results = cursor.fetchone()
+        cursor.close()
+        if not results:
+            return False, 0
+        return True, results[0]
+

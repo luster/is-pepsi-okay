@@ -129,25 +129,46 @@ def person_page(pid):
     return render_template("person.html", movies=m, person=p, error=error)
 
 
-@app.route("/rate/<otype>/<oid>")
-def rate_object(otype, oid):
-    # otype: movies, people, genres
-    # oid: primary key for object type
-    # glike, plike, urating
-    rating = float(request.args.get('rating', 0))
-    if not current_user.is_authenticated():
-        return '0'
-    uid = database.get_user(username=current_user.get_id()).uid
-    otypes = ['movies', 'people', 'genres']
-    if otype not in otypes:
-        return '0'
-    pkey_name = otype[0] + 'id'; # mid, pid, gid
-    table = 'Likes_'+otype.capitalize()
-    if otype == 'movies':
-        table = 'Has_Watched'
-    success = database.rate(table, uid, pkey_name, oid, rating)
+@app.route("/rate/<otype>/<oid>", methods=["GET", "POST"])
+def rate(otype, oid):
+    rating = 0
+    t_map = {
+        'movies': 'Has_Watched',
+        'people': 'Likes_Person',
+        'genres': 'Likes_Genre'
+    }
+    if request.method == 'GET':
+        otypes = ['movies', 'people', 'genres']
+        if otype not in otypes:
+            return '0'
 
-    return str(rating)
+        pkey_name = otype[0] + 'id'
+
+        uid = database.get_user(username=current_user.get_id()).uid
+
+        table = t_map[otype]
+        checked, rating = database.get_rating(table, uid, pkey_name, oid)
+
+        r = {'checked': checked, 'rating': rating}
+        return json.dumps(r)
+
+
+    if request.method == 'POST':
+        # otype: movies, people, genres
+        # oid: primary key for object type
+        # glike, plike, urating
+        rating = float(request.json.get('rating', 0))
+        if not current_user.is_authenticated():
+            return '0'
+        uid = database.get_user(username=current_user.get_id()).uid
+        otypes = ['movies', 'people', 'genres']
+        if otype not in otypes:
+            return '0'
+        pkey_name = otype[0] + 'id'; # mid, pid, gid
+        table = t_map[otype]
+        success = database.rate(table, uid, pkey_name, oid, rating)
+
+        return str(rating)
 
 
 @app.route("/accounts/login", methods=["GET", "POST"])
