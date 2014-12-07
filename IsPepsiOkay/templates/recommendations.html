@@ -4,12 +4,50 @@
 {% include "navigation.html" %}
 <div class="row">
     <div class="twelve columns">
-        {% if error %}
-        <h3>{{ error }}</h3>
-        {% else %}
-        TODO: select 3 Movies, 3 People, 3 Genres by autocomplete
-        Then return recommendations
-        {% endif %}
+	<h1>We Reccommend...</h1>
+	<p>Please Select Three Movies, People, and Genres so we may reccomend you some more!</p>
+	
+        <form>
+        <h5>Movie Search</h5>
+        <input id="movies-auto" class="autocomplete" type="text" />
+        <ul id="movies-auto-list" style="list-style-type:none;">
+        </ul>
+	<h5>People Search</h5>
+        <input id="people-auto" class="autocomplete" type="text" />
+        <ul id="people-auto-list" style="list-style-type:none;">
+        </ul>
+	<h5>Genre Search</h5>
+        <input id="genre-auto" class="autocomplete" type="text" />
+        <ul id="people-auto-list" style="list-style-type:none;">
+        </ul>
+
+	<table>
+		<thead>
+		<tr>
+			<th width="150">Movies</th>
+			<th width="150">People</th>
+			<th width="150">Genres</th>
+		</tr>
+		</thead> 
+		<tbody> 
+			<tr> 
+			<td></td> 
+			<td></td> 
+			<td></td> 
+			</tr>
+			<tr>
+			<td></td> 
+			<td></td> 
+			<td></td> 
+			</tr>	 
+			<tr> 
+			<td></td> 
+			<td></td> 
+			<td></td> 
+			</tr> 
+		</tbody> 
+	</table>	
+
     </div>
 </div>
 

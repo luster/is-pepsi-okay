@@ -107,6 +107,18 @@ class Database(object):
             r.append(dict(id=result[0],name=result[1]))
         return json.dumps(r)
 
+    def get_genres_like(self, gname, limit=5):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        query = """SELECT gid, gname FROM Genres WHERE gname LIKE '%s%%' OR gname LIKE '%%%s' OR gname LIKE '%%%s%%' LIMIT %s;""" % (gname, gname, gname, limit)
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        r = []
+        for result in results:
+            r.append(dict(id=result[0],name=result[1]))
+        return json.dumps(r)
+
     def get_movie_by_id(self, mid):
         self.mysql.before_request()
         cursor = self.mysql.get_db().cursor()

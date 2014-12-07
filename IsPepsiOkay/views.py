@@ -9,7 +9,7 @@ import json
 
 @app.route('/')
 def index():
-    print database.get_user(username=current_user.get_id()).uid
+    #print database.get_user(username=current_user.get_id()).uid
     return render_template('index.html')
 
 
@@ -46,6 +46,13 @@ def search_people():
     if not person:
         return '{}'
     return database.get_people_like(person, 10)
+
+@app.route("/search/autocomplete/genres")
+def search_genres():
+    genre = request.args.get('title')
+    if not genre:
+        return '{}'
+    return database.get_genres_like(genre, 5)
 
 
 def get_movies(mid):
