@@ -138,6 +138,10 @@ function rate(rii){
         url: url,
         data: JSON.stringify({rating: value}),
         success: function(d) {
+            if (d === 'NEED_LOGIN') {
+                alert('You need to login to rate things!');
+                window.location.replace('/accounts/login');
+            }
             return;
         }
     });

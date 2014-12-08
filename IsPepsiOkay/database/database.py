@@ -52,7 +52,7 @@ class Database(object):
         cursor.close()
         if not u:
             return None
-        return User(u[0], u[1], u[2], u[3], u[4])
+        return User(u[1], u[2], u[3], u[4], u[0])
 
     def insert_user(self, username, email, password, dob):
         if (not (username and email and password)):
@@ -292,3 +292,49 @@ class Database(object):
             return False, 0
         return True, results[0]
 
+    def recommend(self, uid, limit=15):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        query = """
+            SELECT mid,title
+            FROM Movies
+            WHERE mid IN (
+                SELECT DISTINCT(mid)
+                FROM Movies
+                WHERE mid IN (
+                    SELECT mid
+                    FROM Involved_In
+                    WHERE pid IN (
+                        SELECT pid
+                        FROM Likes_Person
+                        WHERE uid={0}
+                        ORDER BY urating DESC
+                    )
+                )
+                OR mid IN (
+                    SELECT mid
+                    FROM Involved_In
+                    WHERE pid IN (
+                        SELECT pid
+                        FROM Involved_In
+                        JOIN Has_Watched
+                        ON Involved_In.mid=Has_Watched.mid
+                        WHERE uid={0}
+                        ORDER BY urating DESC
+                    )
+                )
+            )
+            AND mid NOT IN (
+                SELECT mid
+                FROM Has_Watched
+                WHERE uid={0}
+            )
+            ORDER BY RAND()
+            LIMIT {1};"""
+        query = query.format(uid, limit)
+
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        results = [DTmp(**{'mid': r[0], 'title': r[1]}) for r in results]
+        return results
