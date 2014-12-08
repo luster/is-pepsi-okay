@@ -4,13 +4,27 @@
 {% include "navigation.html" %}
 <div class="row">
     <div class="twelve columns">
-        {% if error %}
-        <h3>{{ error }}</h3>
-        {% else %}
-        TODO: select 3 Movies, 3 People, 3 Genres by autocomplete
-        Then return recommendations
-        {% endif %}
-    </div>
-</div>
+        <h1>We Reccommend...</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="150">Movies</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for m in movies %}
+                <tr>
+                    <td>
+                        <a href="/movies/{{m.mid}}">
+                            {{m.title}}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
-{% endblock %}
+        </div>
+    </div>
+
+    {% endblock %}

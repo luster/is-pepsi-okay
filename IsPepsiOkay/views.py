@@ -9,7 +9,7 @@ import json
 
 @app.route('/')
 def index():
-    print database.get_user(username=current_user.get_id()).uid
+    #print database.get_user(username=current_user.get_id()).uid
     return render_template('index.html')
 
 
@@ -25,11 +25,13 @@ def load_user(user_id):
 
 @app.route("/recommendations")
 def recommendations():
-    uid = current_user.get_id()
-    if not uid:
+    if not current_user.is_authenticated():
         return redirect("/accounts/login")
 
-    return render_template('recommendations.html')
+    uid = database.get_user(username=current_user.get_id()).uid
+    recs = database.recommend(uid)
+
+    return render_template('recommendations.html', movies=recs)
 
 
 @app.route("/search/autocomplete/movies")
@@ -46,6 +48,13 @@ def search_people():
     if not person:
         return '{}'
     return database.get_people_like(person, 10)
+
+@app.route("/search/autocomplete/genres")
+def search_genres():
+    genre = request.args.get('title')
+    if not genre:
+        return '{}'
+    return database.get_genres_like(genre, 5)
 
 
 def get_movies(mid):
@@ -138,6 +147,8 @@ def rate(otype, oid):
         'genres': 'Likes_Genre'
     }
     if request.method == 'GET':
+        if not current_user.is_authenticated():
+            return json.dumps({'checked': False, 'rating': 0})
         otypes = ['movies', 'people', 'genres']
         if otype not in otypes:
             return '0'
@@ -154,6 +165,8 @@ def rate(otype, oid):
 
 
     if request.method == 'POST':
+        if not current_user.is_authenticated():
+            return 'NEED_LOGIN'
         # otype: movies, people, genres
         # oid: primary key for object type
         # glike, plike, urating
@@ -202,9 +215,11 @@ def register():
         try:
             m = hashlib.md5()
             m.update(form.password.data)
-            user = database.insert_user(form.username.data, form.email.data, m.hexdigest(), form.dob)
+            user = database.insert_user(form.username.data, form.email.data, m.hexdigest(), form.dob.data)
+            print user
             if user is not None:
                 login_user(user)
+            print 'penis for good measure'
             return redirect(request.args.get("next") or url_for("index"))
         except Exception:
             username_error = True
