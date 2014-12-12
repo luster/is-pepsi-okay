@@ -8,7 +8,6 @@ PROJECT_NAME=IsPepsiOkay
 
 # install
 sudo apt-get update
-sudo apt-get -y upgrade
 sudo apt-get install -y git
 sudo apt-get install -y vim
 sudo apt-get install -y libmysqlclient-dev
@@ -18,7 +17,6 @@ sudo apt-get install -y mysql-server
 sudo apt-get install -y mysql-client
 sudo apt-get install -y nginx
 sudo apt-get install -y supervisor
-sudo apt-get -y update
 
 # python requirements
 cd $PROJECT_DIR
