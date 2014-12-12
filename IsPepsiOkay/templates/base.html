@@ -52,8 +52,12 @@ $(document).ready(function() {
 <script src="{{ url_for('static', filename='js/jquery.rateit.min.js') }}"></script>
 
 <script>
+var timer, delay = 500;
 $('.autocomplete').on('input propertychange paste', function() {
+    clearTimeout(timer);
     var id = this.id;
+    timer = setTimeout(function() {
+
     var results = id + "-list";
     var searchType = id.split(/-/)[0];
     var html;
@@ -89,6 +93,7 @@ $('.autocomplete').on('input propertychange paste', function() {
         $(function () { $('div.rateit, span.rateit').rateit(); });
     }
     });
+    }, delay);
 });
 
 $(document).ready(function() {
