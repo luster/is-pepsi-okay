@@ -19,9 +19,12 @@ Movie Recommendation Semester Project for ECE464 Databases, Fall 2014 at Cooper 
 
 ## Bootstrap your own system
 
-1. Run `bootstrap.sh` at your own risk!
+1. Ensure MySQL is running
 2. Make sure database `IsPepsiOkay` is installed with -uroot and -pispepsiokay
-2. Run flask server with `sudo ./runserver.py`
+3. Populate database with `mysql -uroot -pispepsiokay < IsPepsiOkay/database/dump.sql`
+4. Install python requirements on virtualenv with `virtualenv flask; source flask; pip install -r requirements.txt` 
+2. Run flask server with `sudo python runserver.py`
+4. Then go to [http://33.33.33.33](http://33.33.33.33) to see the app.
 
 ## Authors
 
