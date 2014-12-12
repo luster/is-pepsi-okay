@@ -29,7 +29,7 @@ def recommendations():
         return redirect("/accounts/login")
 
     uid = database.get_user(username=current_user.get_id()).uid
-    recs = database.recommend(uid)
+    recs = database.recommend_better(uid)
 
     return render_template('recommendations.html', movies=recs)
 

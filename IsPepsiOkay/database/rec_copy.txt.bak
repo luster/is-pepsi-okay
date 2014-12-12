@@ -13,7 +13,7 @@ WHERE m.mid IN (
 		WHERE ii.pid IN (
 			SELECT lp.pid
 			FROM Likes_Person lp
-			WHERE uid={0}
+			WHERE uid=23
 			ORDER BY lp.urating DESC
 		)
 	)
@@ -25,7 +25,7 @@ WHERE m.mid IN (
 			FROM Involved_In iiii
 			JOIN Has_Watched hhhh
 			ON iiii.mid=hhhh.mid
-			WHERE uid={0}
+			WHERE uid=23
 			ORDER BY hhhh.urating DESC
 		)
 	)		
@@ -33,7 +33,7 @@ WHERE m.mid IN (
 AND m.mid NOT IN (
 	SELECT hw.mid
 	FROM Has_Watched hw
-	WHERE uid={0}
+	WHERE uid=23
 )
 GROUP BY m.mid
 ORDER BY urt DESC;

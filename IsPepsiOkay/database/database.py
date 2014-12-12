@@ -338,3 +338,56 @@ class Database(object):
         cursor.close()
         results = [DTmp(**{'mid': r[0], 'title': r[1]}) for r in results]
         return results
+
+    def recommend_better(self, uid, limit=30):
+        self.mysql.before_request()
+        cursor = self.mysql.get_db().cursor()
+        query = """
+            SELECT m.mid,m.title,i.pid,AVG(Likes_Person.urating) AS urt
+            FROM Movies m
+            JOIN Involved_In i
+            ON m.mid=i.mid
+            JOIN Likes_Person
+            ON i.pid=Likes_Person.pid
+            WHERE m.mid IN (
+                SELECT DISTINCT(mm.mid)
+                FROM Movies mm
+                WHERE mm.mid IN (
+                    SELECT ii.mid
+                    FROM Involved_In ii
+                    WHERE ii.pid IN (
+                        SELECT lp.pid
+                        FROM Likes_Person lp
+                        WHERE uid={0}
+                        ORDER BY lp.urating DESC
+                    )
+                )
+                OR mm.mid IN (
+                    SELECT iii.mid
+                    FROM Involved_In iii
+                    WHERE iii.pid IN (
+                        SELECT iiii.pid
+                        FROM Involved_In iiii
+                        JOIN Has_Watched hhhh
+                        ON iiii.mid=hhhh.mid
+                        WHERE uid={0}
+                        ORDER BY hhhh.urating DESC
+                    )
+                )
+            )
+            AND m.mid NOT IN (
+                SELECT hw.mid
+                FROM Has_Watched hw
+                WHERE uid={0}
+            )
+            GROUP BY m.mid
+            ORDER BY urt DESC
+            LIMIT {1};"""
+        query = query.format(uid, limit)
+
+        cursor.execute(query)
+        results = cursor.fetchall()
+        cursor.close()
+        results = [DTmp(**{'mid': r[0], 'title': r[1], 'score': r[3]}) for r in results]
+        return results
+

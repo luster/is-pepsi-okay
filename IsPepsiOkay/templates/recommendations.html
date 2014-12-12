@@ -10,6 +10,7 @@
                 <thead>
                     <tr>
                         <th width="150">Movies</th>
+                        <th width="150">Score</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -19,6 +20,9 @@
                         <a href="/movies/{{m.mid}}">
                             {{m.title}}
                         </a>
+                    </td>
+                    <td>
+                            {{m.score}}
                     </td>
                 </tr>
                 {% endfor %}
