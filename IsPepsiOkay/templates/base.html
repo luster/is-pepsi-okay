@@ -90,6 +90,39 @@ $('.autocomplete').on('input propertychange paste', function() {
     });
 });
 
+$(document).ready(function() {
+    var id;
+    var searchType;
+    {% if movie %}
+        var id = '{{movie.mid}}';
+        var searchType = 'movies';
+    {% elif genre %}
+        id = '{{genre.gid}}';
+        searchType = 'genres';
+    {% elif person %}
+        id = '{{person.pid}}';
+        searchType = 'people';
+    {% else %}
+        id = 'null';
+        searchType = 'null';
+    {% endif %}
+
+    if (id !== 'null') {
+        
+        // get rating
+        var rating = get_rating(id, searchType);
+        var checked = rating.is_checked;
+        var value = rating.value;
+
+        var html;
+        html = "<span id='ri-"+id+"' data-otype='"+searchType+"' data-oid='"+id+"' class='rateit' data-rateit-value='"+value+"' data-rateit-ispreset='true' onClick='rate(\"ri-"+id+"\");'></span>";
+        $('h2').append(html);
+    
+        $(function () { $('h2 span.rateit').rateit(); });
+    }
+});
+
+
 </script>
 <script>
 function get_rating(id, searchType) {

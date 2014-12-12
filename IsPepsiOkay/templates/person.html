@@ -7,7 +7,7 @@
         {% if error %}
         <h3>{{ error }}</h3>
         {% else %}
-        <h2>{{person}}</h2>
+        <h2>{{person.name}}</h2>
 
         {% for movie in movies %}
         <h4><a href="/movies/{{movie.mid}}">{{ movie.title }} ({{movie.mdate}})</a></h4>

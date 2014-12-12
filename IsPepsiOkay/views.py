@@ -113,28 +113,34 @@ def genre_api(gid):
 
 @app.route("/genres/<gid>")
 def genre_page(gid):
-    g = database.get_genre_name(gid)
+    gname = database.get_genre_name(gid)
     m = database.get_movies_by_genre(gid)
     movies = []
     for mid in m:
         movies.append(get_movies(mid))
     error = None
-    if not g:
+    if not gname:
         error = "Sorry, genre does not exist!"
     if not m:
         error = "Sorry, genre does not exist!"
+    g = Tmp()
+    g.name = gname
+    g.gid = gid
     return render_template("genre.html", movies=movies, genre=g, error=error)
 
 
 @app.route("/people/<pid>")
 def person_page(pid):
-    p = database.get_person_name(pid)
+    pname = database.get_person_name(pid)
     m = database.get_movies_by_person(pid)
     error = None
-    if not p:
+    if not pname:
         error = "Sorry, person does not exist!"
     if not m:
         error = "Sorry, person does not exist!"
+    p = Tmp()
+    p.pid = pid
+    p.name = pname
     return render_template("person.html", movies=m, person=p, error=error)
 
 

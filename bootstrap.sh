@@ -15,7 +15,7 @@ sudo apt-get install -y python-dev
 sudo apt-get install -y python-virtualenv
 sudo apt-get install -y mysql-server
 sudo apt-get install -y mysql-client
-sudo apt-get install -y nginx
+#sudo apt-get install -y nginx
 sudo apt-get install -y supervisor
 
 # python requirements
@@ -45,12 +45,12 @@ sudo pip install -r $PROJECT_DIR/requirements.txt
 #sudo gunicorn -D --max-requests 1 $PROJECT_NAME:app -b localhost:8000
 
 # mysql initialize
-mysql -uroot -pispepsiokay < $PROJECT_DIR/$PROJECT_NAME/database/schema.sql
-mysql -uroot -pispepsiokay < $PROJECT_DIR/$PROJECT_NAME/database/dump.sql
+#mysql -uroot -pispepsiokay IsPepsiOkay < $PROJECT_DIR/$PROJECT_NAME/database/schema.sql
+mysql -uroot -pispepsiokay IsPepsiOkay < $PROJECT_DIR/$PROJECT_NAME/database/dump.sql
 
 sudo apt-get install -y python-mysqldb
 
 cd $PROJECT_DIR
-sudo ./runserver.py
+sudo ./runserver.py &
 
 echo "Navigate to 33.33.33.33 in your web browser!"

@@ -5,6 +5,7 @@
 <div class="row">
     <div class="twelve columns">
         <h1>We Reccommend...</h1>
+            {% if movies %}
             <table>
                 <thead>
                     <tr>
@@ -23,6 +24,9 @@
                 {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+            <h3>...that you rate some movies, people, and genres first!</h3>
+            {% endif %}
 
         </div>
     </div>
