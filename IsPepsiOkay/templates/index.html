@@ -4,6 +4,9 @@
 {% include "navigation.html" %}
 <div class="row">
     <div class="twelve columns">
+        {% if current_user.is_authenticated() %}
+        <h3>Hi, {{current_user.username}}! </h3>
+        {% endif %}
         <h1>Is Pepsi Okay?</h1>
         <p>Movie recommendations for the amateur (e.g. compared with Netflix),
         much like how Pepsi is the inferior beverage to Coca Cola.</p>
