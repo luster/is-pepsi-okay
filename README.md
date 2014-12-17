@@ -15,7 +15,7 @@ Movie Recommendation Semester Project for ECE464 Databases, Fall 2014 at Cooper 
 2. clone the repo
 3. `cd is-pepsi-okay`
 3. `vagrant up`
-4. Then go to [http://33.33.33.33](http://33.33.33.33) to see the app.
+4. Then go to [http://33.33.33.33:8000](http://33.33.33.33:8000) to see the app.
 
 ## Bootstrap your own system
 
