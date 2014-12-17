@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Is Pepsi Okay?</title>
+<!-- Foundation CSS CDN -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/foundation/5.0.2/css/foundation.min.css">
+<!-- Modernizr CDN -->
+<!-- bleh
+<style>
+* { color: white !important; }
+body {
+    text-shadow: 1px white;
+    background-image: url("static/img/bg.jpg");
+    background-color: #0D487F;
+    background-size: cover;
+    background-repeat: none;
+    color: white !important;
+}
+#navigation, .button-group {
+    margin: 0 auto !important;
+}
+</style>
+-->
+<style>
+.chk, .myrateit {
+    margin-right: 10px !important;
+}
+</style>
+<link rel="stylesheet" href="/static/css/rateit.css">
+</head>
+<body>
+
+<div id="navigation">
+    <ul class="button-group radius">
+        <li><a href="/" class="button radius secondary medium">Home</a></li>
+        <li><a href="/recommendations" class="button radius secondary medium">Recommendations</a></li>
+
+        
+        <li><a href="/accounts/login" class="button radius secondary medium">Login</a></li>
+        <li><a href="/accounts/register" class="button radius secondary medium">Sign Up</a></li>
+        
+    </ul>
+</div>
+<div class="row">
+    <div class="twelve columns">
+        
+        <h1>Is Pepsi Okay?</h1>
+        <p>Movie recommendations for the amateur (e.g. compared with Netflix),
+        much like how Pepsi is the inferior beverage to Coca Cola. To improve
+        your recommendations, search for some movies you've seen and rate them!
+        Also rate some people (actors, directors, producers, writers, composers, etc.).
+        Currently, genres are not taken into account since the current dataset used does
+        not have the cleanest data, especially with regard to genre.
+
+        When you are ready, click Recommendations!
+        </p>
+
+
+        <form>
+        <h5>Movie Search</h5>
+        <input id="movies-auto" class="autocomplete" type="text" />
+        <ul id="movies-auto-list" style="list-style-type:none;">
+        </ul>
+
+
+        <h5>People Search</h5>
+        <input id="people-auto" class="autocomplete" type="text" />
+        <ul id="people-auto-list" style="list-style-type:none;">
+        </ul>
+
+
+        <h5>Genre Search</h5>
+        <input id="genres-auto" class="autocomplete" type="text" />
+        <ul id="genres-auto-list" style="list-style-type:none;">
+        </ul>
+    </form>
+    
+    Created by Ethan Lusterman &amp; Joe Mercedes
+    </div>
+
+
+</div>
+
+
+<script src="//cdn.jsdelivr.net/foundation/5.0.2/js/vendor/custom.modernizr.js"></script>
+<!-- jQuery CDN -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<!-- jQuery local fallback -->
+<script>window.$ || document.write('<script src="/local/jquery.min.js"><\/script>')</script>
+<!-- Foundation JS CDN -->
+<script src="//cdn.jsdelivr.net/foundation/5.0.2/js/foundation.min.js"></script>
+<!-- Foundation JS local fallback -->
+<script>window.Foundation || document.write('<script src="/local/foundation.min.js"><\/script>')</script>
+<!-- Initialize Foundation -->
+<script>$(document).foundation();</script>
+<!-- Foundation CSS local fallback -->
+<script>
+$(document).ready(function() {
+        var bodyColor = $('body').css('color');
+        if(bodyColor != 'rgb(34, 34, 34)') {
+        $("head").prepend('<link rel="stylesheet" href="/local/foundation.min.css">');}});
+</script>
+<script src="/static/js/jquery.rateit.min.js"></script>
+
+<script>
+var timer, delay = 500;
+$('.autocomplete').on('input propertychange paste', function() {
+    clearTimeout(timer);
+    var id = this.id;
+    timer = setTimeout(function() {
+
+    var results = id + "-list";
+    var searchType = id.split(/-/)[0];
+    var html;
+    $.ajax({
+        type: "GET",
+        url: "/search/autocomplete/"+searchType,
+        data: "title=" + $('#'+id).val(),
+        dataType: 'json',
+        success: function(d) {
+        $('#'+results).html('');
+        for (var i=0; i<d.length; i++) {
+            // check if there's a rating
+            // if so, update checkbox and preset rating
+            var rating = get_rating(d[i].id, searchType);
+            var checked = rating.is_checked; // true, false
+            var value = rating.value; // 0, 0.5, ..., 5
+            //var checked = true;
+            //var value = 0.5;
+
+            var iid='likes-'+searchType+'-'+d[i].id;
+            html = "<li id='"+d[i].id+"'><input id='likes-" + searchType + "-" + d[i].id + "'";
+            html += " type='checkbox' class='chk' onClick='review(\""+iid+"\");'";
+            if (checked) { html += " checked"; }
+            html += "><a href='/" + searchType + "/" + d[i].id + "'>";
+            html += "<span>" + d[i].name;
+            html += "</span></a>";
+            html += "<span id='ri-"+d[i].id+"' data-otype='"+searchType+"' data-oid='"+d[i].id+"' class='rateit' data-rateit-value='"+value+"' data-rateit-ispreset='true'";
+            if (!checked) { html += " style='display:none;'"; }
+            html += " onClick='rate(\"ri-"+d[i].id+"\");'></span></li>";
+            //$('#'+results).append("<a href='/"+searchType+"/"+d[i].id+"'><li>"+d[i].name+"</li></a>");
+            $('#'+results).append(html);
+        }
+        $(function () { $('div.rateit, span.rateit').rateit(); });
+    }
+    });
+    }, delay);
+});
+
+$(document).ready(function() {
+    var id;
+    var searchType;
+    
+        id = 'null';
+        searchType = 'null';
+    
+
+    if (id !== 'null') {
+        
+        // get rating
+        var rating = get_rating(id, searchType);
+        var checked = rating.is_checked;
+        var value = rating.value;
+
+        var html;
+        html = "<span id='ri-"+id+"' data-otype='"+searchType+"' data-oid='"+id+"' class='rateit' data-rateit-value='"+value+"' data-rateit-ispreset='true' onClick='rate(\"ri-"+id+"\");'></span>";
+        $('h2').append(html);
+    
+        $(function () { $('h2 span.rateit').rateit(); });
+    }
+});
+
+
+</script>
+<script>
+function get_rating(id, searchType) {
+    // id is the pkey for type searchType (movies, people, genres)
+    var url = '/rate/' + searchType + '/' + id;
+    var x;
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: 'json',
+        async: false,
+        success: function(d) {
+            x = d;
+        }
+    });
+
+    return {is_checked: x.checked, value: x.rating}
+}
+
+function review(iid) {
+    var e = $('#'+iid);
+    var t = e[0];
+    if (!t.checked) {
+        e.parent().children('.rateit')[0].style.cssText='display:none;';
+        // also, call function to remove review from db
+        //TODO
+        return;
+    }
+    e.parent().children('.rateit')[0].style.cssText='display:inline-block;';
+    //var id = t.id.split(/-/)[2];
+    return;
+};
+</script>
+<script type="text/javascript">
+function rate(rii){
+    var ri = $('#'+rii);
+    var otype = ri.data('otype');
+    var oid = ri.data('oid');
+    var value = ri.rateit('value');
+
+    url = '/rate/' + otype + '/' + oid;
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: url,
+        data: JSON.stringify({rating: value}),
+        success: function(d) {
+            if (d === 'NEED_LOGIN') {
+                alert('You need to login to rate things!');
+                window.location.replace('/accounts/login');
+            }
+            return;
+        }
+    });
+
+    return;
+}
+</script>
+
+</body>
+</html>

@@ -347,7 +347,7 @@ class Database(object):
             FROM Movies m
             JOIN Involved_In i
             ON m.mid=i.mid
-            JOIN Likes_Person
+            LEFT OUTER JOIN Likes_Person
             ON i.pid=Likes_Person.pid
             WHERE m.mid IN (
                 SELECT DISTINCT(mm.mid)
@@ -388,6 +388,6 @@ class Database(object):
         cursor.execute(query)
         results = cursor.fetchall()
         cursor.close()
-        results = [DTmp(**{'mid': r[0], 'title': r[1], 'score': r[3]}) for r in results]
+        results = [DTmp(**{'mid': r[0], 'title': r[1], 'score': r[3] if r[3] else float(0.0)}) for r in results]
         return results
 

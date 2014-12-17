@@ -3,8 +3,9 @@ CREATE DATABASE IsPepsiOkay;
 
 USE IsPepsiOkay;
 
-SET collation_connection = ‘utf8_general_ci’;
+SET collation_connection = 'utf8_general_ci';
 ALTER DATABASE IsPepsiOkay CHARACTER SET utf8 COLLATE utf8_general_ci;
+
 
 CREATE TABLE IF NOT EXISTS Users (
     uid INTEGER AUTO_INCREMENT,

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
 debconf-set-selections <<< 'mysql-server mysql-server/root_password password ispepsiokay'
 debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password ispepsiokay'
 
@@ -44,13 +45,13 @@ sudo pip install -r $PROJECT_DIR/requirements.txt
 #cd $PROJECT_DIR/$PROJECT_NAME
 #sudo gunicorn -D --max-requests 1 $PROJECT_NAME:app -b localhost:8000
 
-# mysql initialize
-#mysql -uroot -pispepsiokay IsPepsiOkay < $PROJECT_DIR/$PROJECT_NAME/database/schema.sql
-mysql -uroot -pispepsiokay IsPepsiOkay < $PROJECT_DIR/$PROJECT_NAME/database/dump.sql
 
 sudo apt-get install -y python-mysqldb
+
+# mysql initialize
+mysql -uroot -pispepsiokay < $PROJECT_DIR/$PROJECT_NAME/database/dump.sql
 
 cd $PROJECT_DIR
 sudo ./runserver.py &
 
-echo "Navigate to 33.33.33.33 in your web browser!"
+echo "Navigate to 33.33.33.33:8000 in your web browser!"
